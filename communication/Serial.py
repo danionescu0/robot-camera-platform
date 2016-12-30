@@ -16,6 +16,7 @@ class Serial():
         self.__serial.close()
 
     def send(self, value):
+        print 'writing to serial' + value
         self.__serial.write(value)
 
     def listen(self):
