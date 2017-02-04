@@ -14,7 +14,7 @@ const byte LEFT_MOTOR_EN1_PIN = A3;
 const byte LEFT_MOTOR_EN2_PIN = A2;
 
 SoftwareSerial masterComm(11, 10); // RX, TX
-char buffer[] = {' ',' ',' ', ' ',' ', ' ', ' ', ' '};
+char buffer[] = {' ',' ',' ', ' ',' ', ' ', ' ', ' ', ' '};
 long lastCheckedTime;
 boolean inMotion = false;
 
@@ -42,7 +42,7 @@ void loop()
     if (inMotion && millis() - lastCheckedTime > maxDurationForMottorCommand) {
         stopMotors();
     }
-    /*buffer[0] = 'M';buffer[1] = ':';buffer[2] = '4';buffer[3] = '5';buffer[4] = ':';buffer[5] = '-';buffer[6] = '2';buffer[7] = '1';
+    /*buffer[0] = 'M';buffer[1] = ':';buffer[2] = '-';buffer[3] = '4';buffer[4] = '2';buffer[5] = ':';buffer[6] = '-';buffer[7] = '2';buffer[8] = '1';
     processCommand();
     delay(10000);*/
 }
@@ -59,17 +59,17 @@ void processCommand()
     }
 }
 
-void steerCar(int power, byte direction) 
+void steerCar(int power, int direction) 
 {
-    Serial.print("P=");Serial.println(power);
-    Serial.print("D=");Serial.println(direction);
+    Serial.print("Power=");Serial.println(power);
+    Serial.print("Direction=");Serial.println(direction);
     float leftMotor, rightMotor;
-    if (direction <= 50) {
-        leftMotor = map(direction, 0, 50, 0, 100);
+    if (direction < 0) {
+        leftMotor = map(direction, 0, -50, 0, 100);
         rightMotor = 100;
     } else {
         leftMotor = 100;
-        rightMotor = map(direction, 50, 100, 100, 0);    
+        rightMotor = map(direction, 0, 50, 100, 0);    
     }
     float realPower = map(abs(power), 0, 50, 0, 100);
     float percentLeftMotor = ((realPower / 100) * leftMotor / 100);
@@ -109,15 +109,19 @@ void stopMotors()
 
 void toggleLight(char command)
 {
-    
+    if (buffer[1] == '1') {
+        digitalWrite(FLASH_PIN, HIGH);
+    } else {
+        digitalWrite(FLASH_PIN, LOW);
+    }
 }
 
-byte getMotorDirection()
+int getMotorDirection()
 {
     String message = getMessage();
     byte splitPosition = message.indexOf(':', 2);
 
-    return (byte) message.substring(2, splitPosition).toInt();
+    return message.substring(2, splitPosition).toInt();
 }
 
 int getMotorPower()
@@ -126,7 +130,7 @@ int getMotorPower()
     byte splitPosition = message.indexOf(':', 2);
     byte endPosition = message.indexOf(' ');
     
-    return (int) message.substring(splitPosition+1, endPosition).toInt();  
+    return message.substring(splitPosition+1, endPosition).toInt();  
 }
 
 void clearBuffer()
