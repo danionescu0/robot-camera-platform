@@ -4,8 +4,12 @@ const char MOTOR_COMMAND = 'M';
 const char LIGHT_COMMAND = 'L';
 const long maxDurationForMottorCommand = 300;
 const byte maxPwmValue = 200;
+const long transmitingInterval = 500;
+const int maxObstacleDetection = 1000; // analog read max detection value
+const int minObstacleDetection = 500; // analog read min detection value
 
 const byte FLASH_PIN = 3;
+
 const byte RIGHT_MOTOR_PWM_PIN = 5;
 const byte RIGHT_MOTOR_EN1_PIN = A4;
 const byte RIGHT_MOTOR_EN2_PIN = A5;
@@ -13,9 +17,13 @@ const byte LEFT_MOTOR_PWM_PIN = 6;
 const byte LEFT_MOTOR_EN1_PIN = A3;
 const byte LEFT_MOTOR_EN2_PIN = A2;
 
+const byte FRONT_DISTANCE_SENSOR = A0;
+const byte BACK_DISTANCE_SENSOR = A1;
+
 SoftwareSerial masterComm(11, 10); // RX, TX
 char buffer[] = {' ',' ',' ', ' ',' ', ' ', ' ', ' ', ' '};
 long lastCheckedTime;
+long lastTransmitTime;
 boolean inMotion = false;
 
 void setup() 
@@ -30,6 +38,7 @@ void setup()
     pinMode(RIGHT_MOTOR_EN1_PIN, OUTPUT);
     pinMode(RIGHT_MOTOR_EN2_PIN, OUTPUT);
     lastCheckedTime = millis();
+    lastTransmitTime = millis();
 }
 
 void loop() 
@@ -42,9 +51,24 @@ void loop()
     if (inMotion && millis() - lastCheckedTime > maxDurationForMottorCommand) {
         stopMotors();
     }
+    if (millis() - lastTransmitTime > transmitingInterval) {
+        lastTransmitTime = millis();
+        masterComm.print(getObstacleData());
+        Serial.println(getObstacleData());
+    }
     /*buffer[0] = 'M';buffer[1] = ':';buffer[2] = '-';buffer[3] = '4';buffer[4] = '2';buffer[5] = ':';buffer[6] = '-';buffer[7] = '2';buffer[8] = '1';
     processCommand();
     delay(10000);*/
+}
+
+String getObstacleData()
+{
+    int frontDistance = 1024;//analogRead(FRONT_DISTANCE_SENSOR);
+    int backDistace = analogRead(BACK_DISTANCE_SENSOR);
+    frontDistance = map(frontDistance, maxObstacleDetection, minObstacleDetection, 0, 10);
+    backDistace = map(backDistace, maxObstacleDetection, minObstacleDetection, 0, 10);
+
+    return String("F=" + String(frontDistance) + ":B=" + String(backDistace) + ";");
 }
 
 void processCommand() 
