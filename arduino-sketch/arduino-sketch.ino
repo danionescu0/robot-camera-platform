@@ -3,7 +3,7 @@
 const char MOTOR_COMMAND = 'M';
 const char LIGHT_COMMAND = 'L';
 const long maxDurationForMottorCommand = 300;
-const byte maxPwmValue = 200;
+const byte maxPwmValue = 230;
 const long transmitingInterval = 500;
 const int maxObstacleDetection = 1000; // analog read max detection value
 const int minObstacleDetection = 500; // analog read min detection value
@@ -54,6 +54,7 @@ void loop()
     if (millis() - lastTransmitTime > transmitingInterval) {
         lastTransmitTime = millis();
         masterComm.print(getObstacleData());
+        Serial.print(analogRead(BACK_DISTANCE_SENSOR));Serial.print("---");
         Serial.println(getObstacleData());
     }
     /*buffer[0] = 'M';buffer[1] = ':';buffer[2] = '-';buffer[3] = '4';buffer[4] = '2';buffer[5] = ':';buffer[6] = '-';buffer[7] = '2';buffer[8] = '1';
@@ -63,12 +64,12 @@ void loop()
 
 String getObstacleData()
 {
-    int frontDistance = 1024;//analogRead(FRONT_DISTANCE_SENSOR);
+    //int frontDistance = analogRead(FRONT_DISTANCE_SENSOR);
     int backDistace = analogRead(BACK_DISTANCE_SENSOR);
-    frontDistance = map(frontDistance, maxObstacleDetection, minObstacleDetection, 0, 10);
+    //frontDistance = map(frontDistance, maxObstacleDetection, minObstacleDetection, 0, 10);
     backDistace = map(backDistace, maxObstacleDetection, minObstacleDetection, 0, 10);
 
-    return String("F=" + String(frontDistance) + ":B=" + String(backDistace) + ";");
+    return String("F=" + String(0) + ":B=" + String(backDistace) + ";");
 }
 
 void processCommand() 
@@ -78,7 +79,7 @@ void processCommand()
             steerCar(getMotorPower(), getMotorDirection());
             break;
         case (LIGHT_COMMAND):
-            toggleLight(buffer[1]);
+            toggleLight(buffer[2]);
             break;
     }
 }
@@ -89,7 +90,7 @@ void steerCar(int power, int direction)
     Serial.print("Direction=");Serial.println(direction);
     float leftMotor, rightMotor;
     if (direction < 0) {
-        leftMotor = map(direction, 0, -50, 0, 100);
+        leftMotor = map(direction, 0, -50, 100, 0);
         rightMotor = 100;
     } else {
         leftMotor = 100;
@@ -133,7 +134,8 @@ void stopMotors()
 
 void toggleLight(char command)
 {
-    if (buffer[1] == '1') {
+    Serial.println("Toggle light");
+    if (command == '1') {
         digitalWrite(FLASH_PIN, HIGH);
     } else {
         digitalWrite(FLASH_PIN, LOW);
