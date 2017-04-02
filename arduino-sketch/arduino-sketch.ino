@@ -1,4 +1,7 @@
+// source for TextMotorCommandsInterpretter: "https://github.com/danionescu0/arduino/tree/master/libraries/TextMotorCommandsInterpretter"
+
 #include <SoftwareSerial.h>
+#include <TextMotorCommandsInterpretter.h>
 
 const char MOTOR_COMMAND = 'M';
 const char LIGHT_COMMAND = 'L';
@@ -21,7 +24,9 @@ const byte FRONT_DISTANCE_SENSOR = A0;
 const byte BACK_DISTANCE_SENSOR = A1;
 
 SoftwareSerial masterComm(11, 10); // RX, TX
-char buffer[] = {' ',' ',' ', ' ',' ', ' ', ' ', ' ', ' '};
+TextMotorCommandsInterpretter motorCommandsInterpretter(-50, 50, -50, 50);
+
+String currentCommand;
 long lastCheckedTime;
 long lastTransmitTime;
 boolean inMotion = false;
@@ -29,7 +34,8 @@ boolean inMotion = false;
 void setup() 
 {
     Serial.begin(9600);
-    masterComm.begin(9600);  
+    masterComm.begin(9600);
+    masterComm.setTimeout(10);  
     pinMode(FLASH_PIN, OUTPUT);
     pinMode(LEFT_MOTOR_PWM_PIN, OUTPUT);
     pinMode(LEFT_MOTOR_EN1_PIN, OUTPUT);
@@ -44,9 +50,8 @@ void setup()
 void loop() 
 {
     if (masterComm.available() > 0) {   
-        masterComm.readBytesUntil(';', buffer, 10);
+        currentCommand = masterComm.readString();
         processCommand();
-        clearBuffer();  
     }
     if (inMotion && millis() - lastCheckedTime > maxDurationForMottorCommand) {
         stopMotors();
@@ -57,8 +62,9 @@ void loop()
         Serial.print(analogRead(BACK_DISTANCE_SENSOR));Serial.print("---");
         Serial.println(getObstacleData());
     }
-    /*buffer[0] = 'M';buffer[1] = ':';buffer[2] = '-';buffer[3] = '4';buffer[4] = '2';buffer[5] = ':';buffer[6] = '-';buffer[7] = '2';buffer[8] = '1';
-    processCommand();
+    /*motorCommandsInterpretter.analizeText("M:-14:40;");
+    Serial.write("Left==");Serial.println(motorCommandsInterpretter.getPercentLeft());
+    Serial.write("Right==");Serial.println(motorCommandsInterpretter.getPercentRight());   
     delay(10000);*/
 }
 
@@ -74,35 +80,24 @@ String getObstacleData()
 
 void processCommand() 
 {
-    switch (buffer[0]) {
+    switch (currentCommand.charAt(0)) {
         case (MOTOR_COMMAND):
-            steerCar(getMotorPower(), getMotorDirection());
+            steerCar();
             break;
         case (LIGHT_COMMAND):
-            toggleLight(buffer[2]);
+            toggleLight(currentCommand.charAt(2));
             break;
     }
 }
 
-void steerCar(int power, int direction) 
+void steerCar() 
 {
-    Serial.print("Power=");Serial.println(power);
-    Serial.print("Direction=");Serial.println(direction);
-    float leftMotor, rightMotor;
-    if (direction < 0) {
-        leftMotor = map(direction, 0, -50, 100, 0);
-        rightMotor = 100;
-    } else {
-        leftMotor = 100;
-        rightMotor = map(direction, 0, 50, 100, 0);    
-    }
-    float realPower = map(abs(power), 0, 50, 0, 100);
-    float percentLeftMotor = ((realPower / 100) * leftMotor / 100);
-    float percentRightMotor = ((realPower / 100) * rightMotor / 100);
-    
-    Serial.write("Left=");Serial.println(percentLeftMotor * maxPwmValue);
-    Serial.write("Right=");Serial.println(percentRightMotor * maxPwmValue);
-    setMotorsDirection(power > 0 ? true : false);
+    motorCommandsInterpretter.analizeText(currentCommand);
+    float percentLeftMotor = motorCommandsInterpretter.getPercentLeft();
+    float percentRightMotor = motorCommandsInterpretter.getPercentRight();
+    Serial.write("Left=");Serial.println(percentLeftMotor);
+    Serial.write("Right=");Serial.println(percentRightMotor);
+    setMotorsDirection(motorCommandsInterpretter.getDirection());
     analogWrite(LEFT_MOTOR_PWM_PIN, percentLeftMotor * maxPwmValue);
     analogWrite(RIGHT_MOTOR_PWM_PIN, percentRightMotor * maxPwmValue);    
     inMotion = true;
@@ -141,39 +136,3 @@ void toggleLight(char command)
         digitalWrite(FLASH_PIN, LOW);
     }
 }
-
-int getMotorDirection()
-{
-    String message = getMessage();
-    byte splitPosition = message.indexOf(':', 2);
-
-    return message.substring(2, splitPosition).toInt();
-}
-
-int getMotorPower()
-{
-    String message = getMessage();
-    byte splitPosition = message.indexOf(':', 2);
-    byte endPosition = message.indexOf(' ');
-    
-    return message.substring(splitPosition+1, endPosition).toInt();  
-}
-
-void clearBuffer()
-{
-    for (int i=0; i < sizeof(buffer); i++) {
-        buffer[i] = ' ';
-    }
-}
-
-String getMessage() 
-{
-    int i = 0;
-    String message = "";
-    for (i=0;i < sizeof(buffer);i++) {
-        message += String(buffer[i]);
-    }
-
-    return message;
-}
-
