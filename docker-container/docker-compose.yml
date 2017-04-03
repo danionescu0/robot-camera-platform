@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+    python-server:
+        build: ./python-server/
+        privileged: true
+        devices:
+          - "/dev/ttyS0:/dev/ttyS0"
+        #volumes are for debug
+        volumes:
+          - /home/pi/robot-camera-platform:/root/debug
+        depends_on:
+            - mosquitto
+
+    mosquitto:
+        image: robot-camera-mosquitto
+        build: ./mosquitto/
+        ports:
+            - "1883:1883"
