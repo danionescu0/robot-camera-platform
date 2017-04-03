@@ -9,7 +9,7 @@ class Serial():
         self.__serial = None
 
     def connect(self, receive_message_callback):
-        self.__serial = serial.Serial(self.__endpoint['port'], self.__endpoint['baud_rate'], timeout=0.5)
+        self.__serial = serial.Serial(self.__endpoint['port'], self.__endpoint['baud_rate'], timeout=0.5, writeTimeout = 0.5)
         self.__receive_message_callback = receive_message_callback
 
     def disconnect(self):
@@ -20,11 +20,10 @@ class Serial():
 
     def listen(self):
         received_data = self.__serial.read()
-        print("_"+ received_data.decode() + "_")
         if received_data.decode() == False or received_data.decode() == '':
             return
         self.__message_buffer += received_data.decode()
-        if not self.__is_full_message_recived():
+        if not self.__has_received_full_message():
             return
         self.__receive_message_callback(self.__message_buffer)
         self.__message_buffer = ''
@@ -32,5 +31,5 @@ class Serial():
     def __get_endpoint(self):
         return self.__endpoint
 
-    def __is_full_message_recived(self):
+    def __has_received_full_message(self):
         return True if self.__message_buffer[-1] == self.MESSAGE_TERMINATOR else False

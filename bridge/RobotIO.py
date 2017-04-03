@@ -9,10 +9,11 @@ class RobotIO:
         self.__debug = debug
 
     def received_serial_message(self, message):
-        print("Sending:" + message)
+        print("Received command through serial:" + message.decode())
         self.__mqtt_connection.send(MqttConnection.STATUS_CHANNEL, message)
 
     def received_command(self, message):
-        print("Received command: " + message)
+        print("Received command through MQTT: " + message.decode())
         if not self.__debug:
-            self.__serial.send(message + self.COMMUNICATION_TERMINATOR)
+            forward_serial = message + self.COMMUNICATION_TERMINATOR.encode()
+            self.__serial.send(forward_serial)

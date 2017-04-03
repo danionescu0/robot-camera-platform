@@ -1,11 +1,11 @@
 mqtt = {
-    'host' : 'your_host',
+    'host' : 'mosquitto',
     'port' : 1883, # mosquitto default port
-    'user' : 'your_username',
+    'user' : 'user',
     'password' : 'your_password'
 }
 
 serial = {
-    'port' : '/dev/ttyAMA0',
+    'port' : '/dev/ttyS0',
     'baud_rate' : '9600'
 }

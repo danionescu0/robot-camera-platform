@@ -16,9 +16,11 @@ infrared senzors around the robot.
 
 ##Docker installation
 
-cd ./docker-container/mosquitto
-docker build -t robot-camera-mosquitto .
-
+````
+cd ./docker-container
+docker-compose build 
+docker-compose up
+````
 
 ##Run
 
