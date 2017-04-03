@@ -7,7 +7,7 @@ RUN wget -q -O /etc/apt/sources.list.d/mosquitto-jessie.list http://repo.mosquit
 RUN apt-get update && apt-get install -y mosquitto
 
 RUN adduser --system --disabled-password --disabled-login mosquitto
-COPY ./mosquitto/mosquitto.conf /etc/mosquitto/mosquitto.conf
+COPY ./mosquitto.conf /etc/mosquitto/mosquitto.conf
 RUN echo "" > /etc/mosquitto/pwfile
 RUN mosquitto_passwd -b /etc/mosquitto/pwfile user Abecedar01
 

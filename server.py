@@ -9,8 +9,6 @@ parser = argparse.ArgumentParser(description='Controlls robot')
 parser.add_argument('--debug', dest='debug', action='store_true')
 parser.set_defaults(feature=False)
 args = parser.parse_args()
-print args.debug
-print "done"
 mqtt_connection = MqttConnection(config.mqtt['host'], config.mqtt['port'], config.mqtt['user'], config.mqtt['password'])
 serial = Serial(config.serial)
 

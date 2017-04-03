@@ -20,9 +20,10 @@ class Serial():
 
     def listen(self):
         received_data = self.__serial.read()
-        if received_data == False or received_data == '':
+        print("_"+ received_data.decode() + "_")
+        if received_data.decode() == False or received_data.decode() == '':
             return
-        self.__message_buffer += received_data
+        self.__message_buffer += received_data.decode()
         if not self.__is_full_message_recived():
             return
         self.__receive_message_callback(self.__message_buffer)
