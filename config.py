@@ -1,8 +1,8 @@
 mqtt = {
-    'host' : 'localhost',
+    'host' : 'your_host',
     'port' : 1883, # mosquitto default port
-    'user' : 'user',
-    'password' : 'Abecedar01'
+    'user' : 'your_username',
+    'password' : 'your_password'
 }
 
 serial = {
