@@ -1,16 +1,18 @@
 import paho.mqtt.client as mqtt
+from typing import Callable
+import codecs
 
 class MqttConnection():
     MOVEMENT_CHANNEL = 'robot/movement'
     STATUS_CHANNEL = 'robot/status'
 
-    def __init__(self, host, port, user, password):
+    def __init__(self, host : str, port : str, user : str, password : str):
         self.__host = host
         self.__port = port
         self.__user = user
         self.__password = password
 
-    def connect(self, receive_message_callback):
+    def connect(self, receive_message_callback: Callable[[codecs.StreamReader], None]):
         self.__receive_message_callback = receive_message_callback
         self.client = mqtt.Client()
 
@@ -28,5 +30,5 @@ class MqttConnection():
     def listen(self):
         self.client.loop_start()
 
-    def send(self, channel, message):
+    def send(self, channel : str, message : str):
         self.client.publish(channel, message, 2)
