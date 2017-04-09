@@ -86,3 +86,4 @@ By knowing the full power of the battery pack an power estimation would be possi
 Email alerts and system shutdown should be in place when power is critical.
 * Full tutorial on the project with both hardware and software
 * Single configuration file for senstive settings like passwords, usernames hosts
+* Movement detection with email notification

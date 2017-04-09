@@ -9,6 +9,7 @@ services:
         #volumes are for debug
         volumes:
           - /home/pi/robot-camera-platform:/root/debug
+          - /var/log:/var/log
         depends_on:
             - mosquitto
 
