@@ -1,0 +1,9 @@
+[Unit]
+Description=Starts robot-camera application mosquitto and python server
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/robot-camera-platform/docker-container/
+ExecStart=/usr/local/bin/docker-compose "up" 
+

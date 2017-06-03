@@ -1,0 +1,8 @@
+[Unit]
+Description=Starts robot-camera application video stremming
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/pi/robot-camera-platform/uv4l/start.sh
+
