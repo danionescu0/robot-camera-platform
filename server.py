@@ -14,7 +14,6 @@ parser.set_defaults(feature=False)
 args = parser.parse_args()
 
 logging_config = LoggingConfig(config.logging['log_file'], config.logging['log_entries'])
-print(args.debug)
 logging_config.enable_debug(args.debug)
 logger = logging_config.get_logger()
 sys.excepthook = logging_config.set_error_hadler
