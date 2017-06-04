@@ -59,6 +59,24 @@ Stop streaming
 sudo pkill uv4l
 ````
 
+**Auto starting services on reboot/startup**
+
+1. Copy the files in systemctl folder to /etc/systemd/system/
+
+2. Enable services:
+````
+sudo systemctl enable robot-camera.service
+sudo systemctl enable robot-camera-video.service
+````
+
+3. Reboot
+
+4. Optional, check status:
+````
+sudo systemctl status robot-camera.service
+sudo systemctl status robot-camera-video.service
+````
+
 **How does it work**
 
 This server listens to movement and light commands from mqtt (android app) and 

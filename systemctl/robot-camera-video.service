@@ -6,3 +6,6 @@ After=network-online.target
 Type=simple
 ExecStart=/home/pi/robot-camera-platform/uv4l/start.sh
 
+[Install]
+WantedBy=multi-user.target
+

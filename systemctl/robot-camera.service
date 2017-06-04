@@ -5,5 +5,7 @@ After=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=/home/pi/robot-camera-platform/docker-container/
-ExecStart=/usr/local/bin/docker-compose "up" 
+ExecStart=/usr/local/bin/docker-compose "up"
 
+[Install]
+WantedBy=multi-user.target
