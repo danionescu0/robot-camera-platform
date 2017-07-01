@@ -20,23 +20,22 @@ You can skip this if you'll run it with docker-compose
 
 **Configuration**
 
-Mosquitto configuration:
-
-* create the empty password file: "/etc/mosquitto/pwfile"
-* configure username/password for mosquitto: "mosquitto_passwd -b /etc/mosquitto/pwfile username password"
+Clone the project in the home folder:
+````
+git clone https://github.com/danionescu0/robot-camera-platform
+````
 
 Uv4l configuration:
 
 * by editing uv4l/start.sh you can configure the following aspects of the video streaming: password,
 port, framerate, with, height, rotation and some other minor aspects
 
-Python server:
-
 * edit config.py
 * replace password with your own password that you've set on the mosquitto server
 * optional you can change the baud rate (default 9600) and don't forget to edit that on the arduino-sketch too
 
 **Running project:**
+- install docker and docker-compose
 
 ````
 cd ./docker-container
@@ -77,14 +76,22 @@ sudo systemctl status robot-camera.service
 sudo systemctl status robot-camera-video.service
 ````
 
+** Arduino pro mini pinout **
+
+Led flashlight: D3
+Left motor: PWM (D5), EN1, EN2(A4, A5)
+Right motor: PWM (D6), EN1, EN2(A3, A2)
+Infrared sensors: Front (A0), Back(A1)
+Tx: D11, Rx: D10
+
 **How does it work**
 
-This server listens to movement and light commands from mqtt (android app) and 
+The server listens to movement and light commands from mqtt (android app) and 
 forwards them to serial where will be picked up by the listening arduino to 
 command the robot.
 
 Also the script listens to serial port for distance updates (front and back) from the 
-sensors, and battery level updates (to be implemented).
+sensors.
 
 **Why does an intermediary arduino layer has to exist and not directly the Pi ?**
 

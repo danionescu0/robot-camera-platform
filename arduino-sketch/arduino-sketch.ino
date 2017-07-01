@@ -5,8 +5,15 @@
 
 const char MOTOR_COMMAND = 'M';
 const char LIGHT_COMMAND = 'L';
+/**
+* how long the motor command will take effect in ms
+* an incomming motor command will last for maxDurationForMottorCommand
+* if it's not going to be resetted by another motor command
+*/
 const long maxDurationForMottorCommand = 300;
+// adjust this value to limit robot speed
 const byte maxPwmValue = 230;
+// How long between successive distance transmissions in ms
 const long transmitingInterval = 500;
 const int maxObstacleDetection = 1000; // analog read max detection value
 const int minObstacleDetection = 500; // analog read min detection value
@@ -62,7 +69,8 @@ void loop()
         Serial.print(analogRead(BACK_DISTANCE_SENSOR));Serial.print("---");
         Serial.println(getObstacleData());
     }
-    /*motorCommandsInterpretter.analizeText("M:-14:40;");
+    /* FOR DEBUG
+    motorCommandsInterpretter.analizeText("M:-14:40;");
     Serial.write("Left==");Serial.println(motorCommandsInterpretter.getPercentLeft());
     Serial.write("Right==");Serial.println(motorCommandsInterpretter.getPercentRight());   
     delay(10000);*/
@@ -70,12 +78,12 @@ void loop()
 
 String getObstacleData()
 {
-    //int frontDistance = analogRead(FRONT_DISTANCE_SENSOR);
+    int frontDistance = analogRead(FRONT_DISTANCE_SENSOR);
     int backDistace = analogRead(BACK_DISTANCE_SENSOR);
-    //frontDistance = map(frontDistance, maxObstacleDetection, minObstacleDetection, 0, 10);
+    frontDistance = map(frontDistance, maxObstacleDetection, minObstacleDetection, 0, 10);
     backDistace = map(backDistace, maxObstacleDetection, minObstacleDetection, 0, 10);
 
-    return String("F=" + String(0) + ":B=" + String(backDistace) + ";");
+    return String("F=" + String(frontDistance) + ":B=" + String(backDistace) + ";");
 }
 
 void processCommand() 
