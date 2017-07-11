@@ -1,6 +1,8 @@
 **What is this?**
 
-This is the backend of a mobile camera robot.
+This is the versatile robot platform.
+
+**1. The first usecase is a surveillence robot that is controlled using an android interface:**
 
 The robot will stream the video using [UV4l](http://www.linux-projects.org/uv4l/)
 
@@ -8,6 +10,8 @@ The python server will receive commands using mqtt from the android application,
 distance around the robot.
 
 To access the frontend (android app) access this [repository](https://github.com/danionescu0/android-robot-camera)
+
+
 
 **Manual Installation**
 
@@ -76,14 +80,6 @@ sudo systemctl status robot-camera.service
 sudo systemctl status robot-camera-video.service
 ````
 
-** Arduino pro mini pinout **
-
-Led flashlight: D3
-Left motor: PWM (D5), EN1, EN2(A4, A5)
-Right motor: PWM (D6), EN1, EN2(A3, A2)
-Infrared sensors: Front (A0), Back(A1)
-Tx: D11, Rx: D10
-
 **How does it work**
 
 The server listens to movement and light commands from mqtt (android app) and 
@@ -112,3 +108,20 @@ Email alerts and system shutdown should be in place when power is critical.
 * Full tutorial on the project with both hardware and software
 * Single configuration file for senstive settings like passwords, usernames hosts
 * Movement detection with email notification
+
+**2. The second usecase is a object following robot (still in development)**
+The robot will follow an object of a specific color (unique from background).
+More details on this later, when the project will be finished
+
+Running the robot in vnc graphical interface:
+``` python3 object_tracking.py```
+
+
+
+** Arduino pro mini pinout **
+
+Led flashlight: D3
+Left motor: PWM (D5), EN1, EN2(A4, A5)
+Right motor: PWM (D6), EN1, EN2(A3, A2)
+Infrared sensors: Front (A0), Back(A1)
+Tx: D11, Rx: D10

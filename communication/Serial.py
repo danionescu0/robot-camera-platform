@@ -1,5 +1,5 @@
 import serial
-from typing import Callable
+# from typing import Callable
 
 class Serial():
     MESSAGE_TERMINATOR = ';'
@@ -9,7 +9,7 @@ class Serial():
         self.__message_buffer = ''
         self.__serial = None
 
-    def connect(self, receive_message_callback: Callable[[str], None]):
+    def connect(self, receive_message_callback):
         self.__serial = serial.Serial(self.__endpoint['port'], self.__endpoint['baud_rate'], timeout=0.5, writeTimeout = 0.5)
         self.__receive_message_callback = receive_message_callback
 
