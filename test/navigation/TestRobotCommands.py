@@ -9,3 +9,4 @@ class TestRobotCommands(unittest.TestCase):
         self.assertEqual(robot_commands.steer(180, 50, True), 'M:50:25')
         self.assertEqual(robot_commands.steer(90, 50, True), 'M:0:25')
         self.assertEqual(robot_commands.steer(45, 100, True), 'M:-25:50')
+        self.assertEqual(robot_commands.steer(45, 100, False), 'M:-25:-50')

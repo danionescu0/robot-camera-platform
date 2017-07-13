@@ -20,7 +20,7 @@ class RobotCommands:
         return self.LIGHT_COMMAND.format(literal_state[state])
 
     def __get_converted_power(self, percent_power: int, forward: bool) -> str:
-        power_limits_key = {True: 'forward', 'False': 'backward'}[forward]
+        power_limits_key = {True: 'forward', False: 'backward'}[forward]
 
         return str(MathUtils.remap(
                 percent_power, 0, 100,

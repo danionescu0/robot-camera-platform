@@ -2,6 +2,7 @@
 
 This is the versatile robot platform.
 
+
 **1. The first usecase is a surveillence robot that is controlled using an android interface:**
 
 The robot will stream the video using [UV4l](http://www.linux-projects.org/uv4l/)
@@ -109,12 +110,39 @@ Email alerts and system shutdown should be in place when power is critical.
 * Single configuration file for senstive settings like passwords, usernames hosts
 * Movement detection with email notification
 
-**2. The second usecase is a object following robot (still in development)**
-The robot will follow an object of a specific color (unique from background).
-More details on this later, when the project will be finished
 
-Running the robot in vnc graphical interface:
-``` python3 object_tracking.py```
+
+
+**2. The second usecase is a object following robot (still in development)**
+The robot will follow an object of a specific color (must be unique from background).
+
+In config_navigation.py you'll find:
+````
+hsv_bounds = (
+    (24, 86, 6),
+    (77, 255, 255)
+)
+object_size_threshold = (10, 100)
+````
+
+HSV means hue saturation value, and for our color object detection to work it has a lower and
+an upper bound, our object color will have to be in this range to be detected.
+[Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) you can find a 
+visual HSV object threshold detector.
+
+Object size threshold means the smallest and the highest object radius size 
+(in percents from width) which will be considered a detection.
+
+Running the object tracking script in vnc graphical interface in a terminal:
+
+```` python3 object_tracking.py --show-video ````
+
+This will enable you to view the video, with a circle drawn over it. The cirle means 
+that the object has been detected.
+
+Running the object tracking script with no video output:
+
+```` python3 object_tracking.py ````
 
 
 
