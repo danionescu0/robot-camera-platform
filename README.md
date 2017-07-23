@@ -1,16 +1,58 @@
 **What is this?**
 
-This is the versatile robot platform.
+  This is the versatile robot platform. I've gave it to possible usecases: a surveillence bot
+and a object tracker.
+
+First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.
+
+
+** Components **
+
+Checklist: 
+
+* A small robot car with two ac motors with gearboxes
+
+* Arduino pro mini
+
+* Led light
+
+* Small NPN tranzistor and 1 k rezistor
+
+* L298N Dual H-Bridge
+
+* Two power supplies on for the motors one for the raspberry pi and arduino
+
+* RaspberryPi 3
+
+* Two analog infrared distance sensors 
+
+
+Pinout:
+
+Led flashlight: D3
+
+Left motor: PWM (D5), EN1, EN2(A4, A5)
+
+Right motor: PWM (D6), EN1, EN2(A3, A2)
+
+Infrared sensors: Front (A0), Back(A1)
+
+Tx: D11, Rx: D10
+
+
+![fritzig_sketch.png](https://github.com/danionescu0/robot-camera-platform/blob/master/arduino-sketch/sketch_small.png)
 
 
 **1. The first usecase is a surveillence robot that is controlled using an android interface:**
 
+A video demo is available on [youtube](https://youtu.be/6FrEs4C9D-Y)
+
 The robot will stream the video using [UV4l](http://www.linux-projects.org/uv4l/)
 
-The python server will receive commands using mqtt from the android application, and will transmit battery level and 
-distance around the robot.
+The python server will receive commands using mqtt from the android application, and will transmit 
+distance in front and behind the robot.
 
-To access the frontend (android app) access this [repository](https://github.com/danionescu0/android-robot-camera)
+The android application is located in this [repository](https://github.com/danionescu0/android-robot-camera)
 
 
 
@@ -106,15 +148,14 @@ a safeguard it's more reliable because it does not depends on an operating syste
 * Implement a battery status updater, maby my monitoring the power consumption for the py and arduino.
 By knowing the full power of the battery pack an power estimation would be possible.
 Email alerts and system shutdown should be in place when power is critical.
-* Full tutorial on the project with both hardware and software
-* Single configuration file for senstive settings like passwords, usernames hosts
 * Movement detection with email notification
 
 
 
-
-**2. The second usecase is a object following robot (still in development)**
+**2. The second usecase is a object following robot**
 The robot will follow an object of a specific color (must be unique from background).
+
+A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
 
 In config_navigation.py you'll find:
 ````
@@ -143,13 +184,3 @@ that the object has been detected.
 Running the object tracking script with no video output:
 
 ```` python3 object_tracking.py ````
-
-
-
-** Arduino pro mini pinout **
-
-Led flashlight: D3
-Left motor: PWM (D5), EN1, EN2(A4, A5)
-Right motor: PWM (D6), EN1, EN2(A3, A2)
-Infrared sensors: Front (A0), Back(A1)
-Tx: D11, Rx: D10

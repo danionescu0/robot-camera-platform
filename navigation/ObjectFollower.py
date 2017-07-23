@@ -44,10 +44,10 @@ class ObjectFollower:
         return False
 
     def __get_direction(self):
+        return True
         height, width, channels = self.__image.shape
         maximum_object_size = int(self.__object_size_threshold[1] * width / 100)
         all_most_maximum_object_size = int(0.8 * self.__object_size_threshold[1] * width / 100)
-        print(all_most_maximum_object_size, maximum_object_size)
         if 2 * self.__radius >= all_most_maximum_object_size and 2 * self.__radius <= maximum_object_size:
             return False
 
