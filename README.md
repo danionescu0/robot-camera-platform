@@ -36,8 +36,7 @@ using serial interface to the arduino board. The arduino board controlls the mot
 d. The arduino board senses distances in front and back of the robot and sends the data through the serial interface to the 
 python server, the python forwards them to the MQTT and they get picked up by the android interface and shown to the user
 
-![ifttt.png](https://github.com/danionescu0/robot-camera-platformblob/master/resources/diagram1.png)
-
+![ifttt.png](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/diagram1.png)
 
 **Why does an intermediary arduino layer has to exist and not directly the Pi ?**
 
