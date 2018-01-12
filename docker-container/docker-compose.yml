@@ -6,7 +6,6 @@ services:
         privileged: true
         devices:
           - "/dev/ttyS0:/dev/ttyS0"
-        #volumes are for debug
         volumes:
           - /home/pi/robot-camera-platform:/root/debug
           - /var/log:/var/log

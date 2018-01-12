@@ -1,46 +1,15 @@
 **What is this?**
 
   This is the versatile robot platform. I've gave it to possible usecases: a surveillence bot
-and a object tracker.
-
-First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.
+and a object tracker but there can be more, i'll leave this to your imagination :)
 
 
-** Components **
+1. Surveillence robot
 
-Checklist: 
+2. Object follower
 
-* A small robot car with two ac motors with gearboxes
+3. Building the robot
 
-* Arduino pro mini
-
-* Led light
-
-* Small NPN tranzistor and 1 k rezistor
-
-* L298N Dual H-Bridge
-
-* Two power supplies on for the motors one for the raspberry pi and arduino
-
-* RaspberryPi 3
-
-* Two analog infrared distance sensors 
-
-
-Pinout:
-
-Led flashlight: D3
-
-Left motor: PWM (D5), EN1, EN2(A4, A5)
-
-Right motor: PWM (D6), EN1, EN2(A3, A2)
-
-Infrared sensors: Front (A0), Back(A1)
-
-Tx: D11, Rx: D10
-
-
-![fritzig_sketch.png](https://github.com/danionescu0/robot-camera-platform/blob/master/arduino-sketch/sketch_small.png)
 
 
 **1. The first usecase is a surveillence robot that is controlled using an android interface:**
@@ -55,82 +24,20 @@ distance in front and behind the robot.
 The android application is located in this [repository](https://github.com/danionescu0/android-robot-camera)
 
 
-
-**Manual Installation**
-
-You can skip this if you'll run it with docker-compose
-
-* uv4l streamming: https://www.instructables.com/id/Raspberry-Pi-Video-Streaming/?ALLSTEPS
-* python packages: ````pip install.sh -r requirements.txt````
-* mosquitto 3.1: ````sudo apt-get install.sh mosquitto````
-
-
-**Configuration**
-
-Clone the project in the home folder:
-````
-git clone https://github.com/danionescu0/robot-camera-platform
-````
-
-Uv4l configuration:
-
-* by editing uv4l/start.sh you can configure the following aspects of the video streaming: password,
-port, framerate, with, height, rotation and some other minor aspects
-
-* edit config.py
-* replace password with your own password that you've set on the mosquitto server
-* optional you can change the baud rate (default 9600) and don't forget to edit that on the arduino-sketch too
-
-**Running project:**
-- install docker and docker-compose
-
-````
-cd ./docker-container
-docker-compose build # once to install
-docker-compose up
-````
-
-
-**Uv4l streamming:**
-
-Start image streaming: 
-````
-chmod +x uv4l/install.sh
-sh /uv4l/install.sh # once to install
-chmod +x uv4l/start.sh
-sh uv4l/start.sh
-````
-Stop streaming
-````
-sudo pkill uv4l
-````
-
-**Auto starting services on reboot/startup**
-
-1. Copy the files in systemctl folder to /etc/systemd/system/
-
-2. Enable services:
-````
-sudo systemctl enable robot-camera.service
-sudo systemctl enable robot-camera-video.service
-````
-
-3. Reboot
-
-4. Optional, check status:
-````
-sudo systemctl status robot-camera.service
-sudo systemctl status robot-camera-video.service
-````
-
 **How does it work**
 
-The server listens to movement and light commands from mqtt (android app) and 
-forwards them to serial where will be picked up by the listening arduino to 
-command the robot.
+a. The android app shows the uv4l streamming inside a webview.
 
-Also the script listens to serial port for distance updates (front and back) from the 
-sensors.
+b. Using controlls inside the android app lights and engines commands are issued to the MQTT server
+
+c. The python server inside the docker container on the raspberry pi listens to MQTT commands and passes them
+using serial interface to the arduino board. The arduino board controlls the motors and the lights.
+
+d. The arduino board senses distances in front and back of the robot and sends the data through the serial interface to the 
+python server, the python forwards them to the MQTT and they get picked up by the android interface and shown to the user
+
+![ifttt.png](https://github.com/danionescu0/robot-camera-platformblob/master/resources/diagram1.png)
+
 
 **Why does an intermediary arduino layer has to exist and not directly the Pi ?**
 
@@ -149,6 +56,75 @@ a safeguard it's more reliable because it does not depends on an operating syste
 By knowing the full power of the battery pack an power estimation would be possible.
 Email alerts and system shutdown should be in place when power is critical.
 * Movement detection with email notification
+* Implement a safeguard inside the arduino sketch, the motors should stop if proximity is detected
+
+
+**Installation**
+
+
+*Install Uv4l streamming:*
+ 
+````
+chmod +x uv4l/install.sh
+chmod +x uv4l/start.sh
+sh ./uv4l/install.sh 
+````
+A complete tutorial about uv4l is found here: https://www.instructables.com/id/Raspberry-Pi-Video-Streaming/?ALLSTEPS
+
+
+
+*Clone the project in the home folder:*
+````
+git clone https://github.com/danionescu0/robot-camera-platform
+````
+The folder location it's important because in docker-compose.yml the location is hardcoded as: /home/pi/robot-camera-platform:/root/debug
+If you need to change the location, please change the value in docker-compose too
+
+
+*Uv4l configuration:*
+
+* by editing uv4l/start.sh you can configure the following aspects of the video streaming: password,
+port, framerate, with, height, rotation and some other minor aspects
+* edit config.py and replace password with your own password that you've set on the mosquitto server
+* optional you can change the baud rate (default 9600) and don't forget to edit that on the arduino-sketch too
+
+
+*Install docker and docker-compose*
+
+About docker installation: https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
+About docker-compose installation: https://www.berthon.eu/2017/getting-docker-compose-on-raspberry-pi-arm-the-easy-way/
+
+*Test uv4l installation*
+
+a. Start it:
+````
+sh ./uv4l/start.sh 
+````
+b.test it in the browser
+
+c. Stop it
+````
+sudo pkill uv4l
+````
+
+
+**Auto starting services on reboot/startup**
+
+a. Copy the files from systemctl folder in systemctl folder to /etc/systemd/system/
+
+b. Enable services:
+````
+sudo systemctl enable robot-camera.service
+sudo systemctl enable robot-camera-video.service
+````
+
+c. Reboot
+
+d. Optional, check status:
+````
+sudo systemctl status robot-camera.service
+sudo systemctl status robot-camera-video.service
+````
 
 
 
@@ -184,3 +160,45 @@ that the object has been detected.
 Running the object tracking script with no video output:
 
 ```` python3 object_tracking.py ````
+
+
+**3. Building the robot**
+First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.
+
+
+** Components **
+
+Fritzing schematic:
+
+![fritzig_sketch.png](https://github.com/danionescu0/robot-camera-platform/blob/master/arduino-sketch/sketch_small.png)
+
+Checklist: 
+
+* A small robot car with two ac motors with gearboxes
+
+* Arduino pro mini
+
+* Led light
+
+* Small NPN tranzistor and 1 k rezistor
+
+* L298N Dual H-Bridge
+
+* Two power supplies on for the motors one for the raspberry pi and arduino
+
+* RaspberryPi 3
+
+* Two analog infrared distance sensors 
+
+
+Pinout:
+
+Led flashlight: D3
+
+Left motor: PWM (D5), EN1, EN2(A4, A5)
+
+Right motor: PWM (D6), EN1, EN2(A3, A2)
+
+Infrared sensors: Front (A0), Back(A1)
+
+Tx: D11, Rx: D10
