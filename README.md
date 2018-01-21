@@ -14,6 +14,8 @@ and a object tracker but there can be more, i'll leave this to your imagination 
 
 **1. The first usecase is a surveillence robot that is controlled using an android interface:**
 
+Full tutorial on [instructables](https://www.instructables.com/id/Android-Controlled-Robot-Spy-Camera/)
+
 A video demo is available on [youtube](https://youtu.be/6FrEs4C9D-Y)
 
 The robot will stream the video using [UV4l](http://www.linux-projects.org/uv4l/)
@@ -26,9 +28,10 @@ The android application is located in this [repository](https://github.com/danio
 
 **How does it work**
 
-a. The android app shows the uv4l streamming inside a webview.
+a. The android app shows the uv4l streaming inside a webview. The uv4l process runs on the raspberry pi, captures video input from the camera and streams it. 
+It's an awesome tool with many features
 
-b. Using controlls inside the android app lights and engines commands are issued to the MQTT server
+b. Using controls inside the android app lights and engines commands are issued to the MQTT server
 
 c. The python server inside the docker container on the raspberry pi listens to MQTT commands and passes them
 using serial interface to the arduino board. The arduino board controlls the motors and the lights.
@@ -80,18 +83,20 @@ The folder location it's important because in docker-compose.yml the location is
 If you need to change the location, please change the value in docker-compose too
 
 
-*Uv4l configuration:*
+*Configuration:*
 
 * by editing uv4l/start.sh you can configure the following aspects of the video streaming: password,
 port, framerate, with, height, rotation and some other minor aspects
 * edit config.py and replace password with your own password that you've set on the mosquitto server
+* edit docker-container/mosquitto/Dockerfile and replace this line
+````
+RUN mosquitto_passwd -b /etc/mosquitto/pwfile user your_password
+````
+
+with your own user and password for mosquitto
+
 * optional you can change the baud rate (default 9600) and don't forget to edit that on the arduino-sketch too
 
-
-*Install docker and docker-compose*
-
-About docker installation: https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
-About docker-compose installation: https://www.berthon.eu/2017/getting-docker-compose-on-raspberry-pi-arm-the-easy-way/
 
 *Test uv4l installation*
 
@@ -99,12 +104,18 @@ a. Start it:
 ````
 sh ./uv4l/start.sh 
 ````
-b.test it in the browser
+b. Test it in the browser at the address: http://your_ip:9090/stream
 
 c. Stop it
 ````
 sudo pkill uv4l
 ````
+
+
+*Install docker and docker-compose*
+
+About docker installation: https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
+About docker-compose installation: https://www.berthon.eu/2017/getting-docker-compose-on-raspberry-pi-arm-the-easy-way/
 
 
 **Auto starting services on reboot/startup**
@@ -128,7 +139,7 @@ sudo systemctl status robot-camera-video.service
 
 
 **2. The second usecase is a object following robot**
-The robot will follow an object of a specific color (must be unique from background).
+The robot will follow an object of a specific color color and size threshold.
 
 A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
 
@@ -149,11 +160,12 @@ visual HSV object threshold detector.
 Object size threshold means the smallest and the highest object radius size 
 (in percents from width) which will be considered a detection.
 
-Running the object tracking script in vnc graphical interface in a terminal:
+Running the object tracking script in VNC graphical interface in a terminal:
+More information of how to install VNC ​[here](https://www.raspberrypi.org/documentation/remote-access/vnc/).
 
 ```` python3 object_tracking.py --show-video ````
 
-This will enable you to view the video, with a circle drawn over it. The cirle means 
+This will enable you to view the video, with a circle drawn over it. The circle means 
 that the object has been detected.
 
 Running the object tracking script with no video output:
@@ -173,22 +185,59 @@ Fritzing schematic:
 
 Checklist: 
 
-* A small robot car with two ac motors with gearboxes
+1. Plexiglass sheet
 
-* Arduino pro mini
+2. Plastic sheet ( you can also use a plexiglass sheet here )
 
-* Led light
+3. Glue
 
-* Small NPN tranzistor and 1 k rezistor
+4. Tyre + DC motor with gearbox + bracket (eBay) 13$
 
-* L298N Dual H-Bridge
+5. Small nuts and bolts
 
-* Two power supplies on for the motors one for the raspberry pi and arduino
+6. 2 x any directional wheel tyre
 
-* RaspberryPi 3
+7. Small LED flashlight (it will be transformed into a headlight)
 
-* Two analog infrared distance sensors 
+8. Arduino pro mini 328p (eBay) 2 $
 
+9. 2 x infrared obstacle sensor
+
+10. PCB
+
+11. NPN tranzistor (to drive the flashlight)
+
+12. L7805CV 5V regulator
+
+13. L298 H-bridge 
+
+14. Rezistor 220 Ohms
+
+15. Male usb connector
+
+16. Male micro usb connector
+
+17. Various wires
+
+18. 3 v regulator (for communication between arduino and raspberry pi)
+
+19. Male & female PCB connectors
+
+20. On / off switch
+
+21. XT-60 female LiPo connector (eBay) 1.2$
+
+22. 2S 1300 mAh LiPo battery with XT-60 connector
+
+23. 5v battery pack
+
+24. Raspberry Pi 3
+
+25. Raspberry Pi card
+
+26. Raspberry Pi case
+
+27. Raspberry Pi camera
 
 Pinout:
 
