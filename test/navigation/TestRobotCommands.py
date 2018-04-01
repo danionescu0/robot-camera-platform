@@ -2,6 +2,7 @@ import unittest
 
 from navigation.RobotCommands import RobotCommands
 
+
 class TestRobotCommands(unittest.TestCase):
     def test_steer(self):
         robot_commands = RobotCommands()

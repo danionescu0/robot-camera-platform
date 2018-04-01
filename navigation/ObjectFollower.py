@@ -1,4 +1,5 @@
-# from typing import Tuple
+import imutils
+
 from navigation.MathUtils import MathUtils
 from navigation.ObjectDetector import ObjectDetector
 from navigation.RobotCommands import RobotCommands
@@ -22,8 +23,13 @@ class ObjectFollower:
 
         return self
 
-    def get_command(self) -> str:
+    def has_command(self) -> bool:
         if self.__center is False or not self.__is_detection_in_range():
+            return False
+        return True
+
+    def get_command(self) -> str:
+        if not self.has_command():
             return None
         angle = self.__get_angle(self.__center, self.__image)
 

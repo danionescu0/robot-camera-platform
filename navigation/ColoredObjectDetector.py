@@ -7,6 +7,9 @@ class ColoredObjectDetector(ObjectDetector):
     def __init__(self, hsv_bounds):
         self.__hsv_bounds = hsv_bounds
 
+    def configure(self):
+        pass
+
     def find(self, image):
         hsv_frame = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv_frame, self.__hsv_bounds[0], self.__hsv_bounds[1])

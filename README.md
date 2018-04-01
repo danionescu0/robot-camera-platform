@@ -4,11 +4,11 @@
 and a object tracker but there can be more, i'll leave this to your imagination :)
 
 
-1. Surveillence robot
+1. Surveillence robot usecase
 
-2. Object follower
+2. Object follower usecase
 
-3. Building the robot
+3. Building the robot parts & schameatics
 
 
 
@@ -138,12 +138,13 @@ sudo systemctl status robot-camera-video.service
 
 
 
-**2. The second usecase is a object following robot**
+**2. The second usecase is a object/face following robot**
 The robot will follow an object of a specific color color and size threshold.
 
 A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
 
-First install dependencies using pip:
+First install dependencies using pip, the installation process will be quite slow
+
 ````
 sudo pip3 install -r /home/pi/robot-camera-platform/navigation/requirements.txt
 ````
@@ -168,15 +169,16 @@ visual HSV object threshold detector.
 Running the object tracking script in VNC graphical interface in a terminal:
 More information of how to install VNC ​[here](https://www.raspberrypi.org/documentation/remote-access/vnc/).
 
-```` python3 object_tracking.py --show-video ````
+```` python3 object_tracking.py colored-object --show-video ````
 
 This will enable you to view the video, with a circle drawn over it. The circle means 
 that the object has been detected.
 
 Running the object tracking script with no video output:
 
-```` python3 object_tracking.py ````
+```` python3 object_tracking.py colored-object ````
 
+The face follower it's in alpha state right now, it seems to be very slow.
 
 **3. Building the robot**
 
@@ -189,7 +191,7 @@ Fritzing schematic:
 
 ![fritzig_sketch.png](https://github.com/danionescu0/robot-camera-platform/blob/master/arduino-sketch/sketch_small.png)
 
-Checklist: 
+**Checklist:** 
 
 1. Plexiglass sheet
 
@@ -245,7 +247,8 @@ Checklist:
 
 27. Raspberry Pi camera
 
-Pinout:
+
+**Pinout:**
 
 Led flashlight: D3
 
