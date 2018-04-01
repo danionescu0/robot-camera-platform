@@ -8,6 +8,7 @@ from communication.MqttConnection import MqttConnection
 from communication.Serial import Serial
 from bridge.RobotIO import RobotIO
 
+
 parser = argparse.ArgumentParser(description='Controlls robot')
 parser.add_argument('--debug', dest='debug', action='store_true')
 parser.set_defaults(feature=False)

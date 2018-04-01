@@ -3,6 +3,7 @@ import logging
 from communication.MqttConnection import MqttConnection
 from communication.Serial import Serial
 
+
 class RobotIO:
     COMMUNICATION_TERMINATOR = ';'
 

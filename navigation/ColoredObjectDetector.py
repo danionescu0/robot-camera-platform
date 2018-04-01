@@ -2,6 +2,7 @@ import cv2
 
 from navigation.ObjectDetector import ObjectDetector
 
+
 class ColoredObjectDetector(ObjectDetector):
     def __init__(self, hsv_bounds):
         self.__hsv_bounds = hsv_bounds

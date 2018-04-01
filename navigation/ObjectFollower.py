@@ -3,6 +3,7 @@ from navigation.MathUtils import MathUtils
 from navigation.ObjectDetector import ObjectDetector
 from navigation.RobotCommands import RobotCommands
 
+
 class ObjectFollower:
     SPEED = 30
 
@@ -22,11 +23,11 @@ class ObjectFollower:
         return self
 
     def get_command(self) -> str:
-        if self.__center == False or not self.__is_detection_in_range():
+        if self.__center is False or not self.__is_detection_in_range():
             return None
         angle = self.__get_angle(self.__center, self.__image)
 
-        return self.__robot_commands.steer(angle, self.SPEED, self.__get_direction())
+        return self.__robot_commands.steer(angle, self.SPEED, self.__should_move_forward())
 
     def get_center(self):
         return self.__center
@@ -43,14 +44,7 @@ class ObjectFollower:
 
         return False
 
-    def __get_direction(self):
-        return True
-        height, width, channels = self.__image.shape
-        maximum_object_size = int(self.__object_size_threshold[1] * width / 100)
-        all_most_maximum_object_size = int(0.8 * self.__object_size_threshold[1] * width / 100)
-        if 2 * self.__radius >= all_most_maximum_object_size and 2 * self.__radius <= maximum_object_size:
-            return False
-
+    def __should_move_forward(self):
         return True
 
     def __get_angle(self, center, image):

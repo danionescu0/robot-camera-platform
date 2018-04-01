@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 from typing import Callable
 import codecs
 
+
 class MqttConnection():
     MOVEMENT_CHANNEL = 'robot/movement'
     STATUS_CHANNEL = 'robot/status'

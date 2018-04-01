@@ -1,4 +1,2 @@
-paho-mqtt
-pyserial
-imutils
-cv2
+paho_mqtt==1.3.1
+pyserial==3.4

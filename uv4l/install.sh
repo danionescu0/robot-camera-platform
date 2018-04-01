@@ -17,4 +17,3 @@ apt-get update && apt-get upgrade && apt-get install -y  \
     uv4l-uvc \
     uv4l-xscreen \
     uv4l-mjpegstream
-

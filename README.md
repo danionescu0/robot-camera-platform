@@ -143,7 +143,12 @@ The robot will follow an object of a specific color color and size threshold.
 
 A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
 
-In config_navigation.py you'll find:
+First install dependencies using pip:
+````
+sudo pip3 install -r /home/pi/robot-camera-platform/navigation/requirements.txt
+````
+
+In navigation/config.py you'll find:
 ````
 hsv_bounds = (
     (24, 86, 6),
@@ -152,12 +157,12 @@ hsv_bounds = (
 object_size_threshold = (10, 100)
 ````
 
-HSV means hue saturation value, and for our color object detection to work it has a lower and
+- HSV means hue saturation value, and for our color object detection to work it has a lower and
 an upper bound, our object color will have to be in this range to be detected.
 [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) you can find a 
 visual HSV object threshold detector.
 
-Object size threshold means the smallest and the highest object radius size 
+- Object size threshold means the smallest and the highest object radius size 
 (in percents from width) which will be considered a detection.
 
 Running the object tracking script in VNC graphical interface in a terminal:
@@ -174,6 +179,7 @@ Running the object tracking script with no video output:
 
 
 **3. Building the robot**
+
 First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.
 
 
