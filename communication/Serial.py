@@ -1,5 +1,5 @@
 import serial
-# from typing import Callable
+
 
 class Serial():
     MESSAGE_TERMINATOR = ';'

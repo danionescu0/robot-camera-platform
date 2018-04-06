@@ -1,9 +1,7 @@
-import imutils
-
 from navigation.MathUtils import MathUtils
 from navigation.ObjectDetector import ObjectDetector
 from navigation.RobotCommands import RobotCommands
-
+from communication.Serial import Serial
 
 class ObjectFollower:
     SPEED = 30
@@ -18,7 +16,8 @@ class ObjectFollower:
         self.__image = None
 
     def process(self, image):
-        self.__center, self.__radius = self.__object_detector.find(image)
+        self.__center, radius = self.__object_detector.find(image)
+        self.__radius = int(radius)
         self.__image = image
 
         return self
@@ -33,7 +32,7 @@ class ObjectFollower:
             return None
         angle = self.__get_angle(self.__center, self.__image)
 
-        return self.__robot_commands.steer(angle, self.SPEED, self.__should_move_forward())
+        return self.__robot_commands.steer(angle, self.SPEED, self.__should_move_forward()) + Serial.MESSAGE_TERMINATOR
 
     def get_center(self):
         return self.__center

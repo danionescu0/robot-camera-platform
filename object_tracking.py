@@ -9,6 +9,8 @@ from navigation import config_navigation
 from navigation.ObjectFollower import ObjectFollower
 from navigation.RobotCommands import RobotCommands
 from navigation.ObjectDetectorFactory import ObjectDetectorFactory
+from navigation.ImageDebug import ImageDebug
+from navigation.FrameProvider import FrameProvider
 
 
 # configure argument parser
@@ -27,32 +29,29 @@ parser.set_defaults(feature=False)
 args = parser.parse_args()
 
 
-#configure serial
-serial = Serial(config.serial)
+serial = Serial(config.serial)  #configure serial
 serial.connect(None)
 detector = ObjectDetectorFactory.get(args.detector_type, args.extra_cfg)
-robot_commands = RobotCommands()
-object_follower = ObjectFollower(detector, robot_commands, config_navigation.object_size_threshold)
-video_capture = cv2.VideoCapture(0) # start video capture from raspberry pi camera
+object_follower = ObjectFollower(detector, RobotCommands(), config_navigation.object_size_threshold)
+image_debug = ImageDebug((0, 255, 255), 2)
+frame_provider = FrameProvider(config_navigation.process_image_delay_ms)
+frame_provider.start()
 
-while True:
-    ret, frame = video_capture.read()
-    if ret is not True:
-        break
-    frame = imutils.resize(frame, width=600)  # image is resised by with with 600 px for better performance
-    frame = imutils.rotate(frame, 90) # image is rotated 90 degreeds due to the robot camera position
+
+while not frame_provider.received_stop():
+    if not frame_provider.has_frame():
+        continue
+    frame = frame_provider.get_frame()
+    # image is resised by with with some amount in px for better performance
+    frame = imutils.resize(frame, width=config_navigation.resize_image_by_width)
+    frame = imutils.rotate(frame, 90)  # image is rotated 90 degreeds due to the robot camera position
     object_follower.process(frame)
     if object_follower.has_command():
         command = object_follower.get_command()
-        full_command = command + serial.MESSAGE_TERMINATOR
-        serial.send(full_command.encode())
-        #draws a circle on image to visually mark the object
-        cv2.circle(frame, object_follower.get_center(), int(object_follower.get_radius()), (0, 255, 255), 2)
+        serial.send(object_follower.get_command().encode())
         print('Motor command: {0}'.format(command))
+        image_debug.draw_guidelines(frame, object_follower.get_center(), object_follower.get_radius())
     if args.video:
         cv2.imshow('frame', frame)
 
-    if cv2.waitKey(30) & 0xFF == ord('q'):
-        break
-
-video_capture.release()
+frame_provider.stop()
