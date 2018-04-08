@@ -13,6 +13,7 @@ and a object tracker but there can be more, i'll leave this to your imagination 
 
 
 **1. The first usecase is a surveillence robot that is controlled using an android interface:**
+###############################################################################################
 
 Full tutorial on [instructables](https://www.instructables.com/id/Android-Controlled-Robot-Spy-Camera/)
 
@@ -51,14 +52,6 @@ a few times per second
 * if an error might occur in the python script the robot might run forever draining the
 batteries and probably damaging it or catching fire if not supervised, in an arduino sketch
 a safeguard it's more reliable because it does not depends on an operating system
-
-**ToDo**
-
-* Implement a battery status updater, maby my monitoring the power consumption for the py and arduino.
-By knowing the full power of the battery pack an power estimation would be possible.
-Email alerts and system shutdown should be in place when power is critical.
-* Movement detection with email notification
-* Implement a safeguard inside the arduino sketch, the motors should stop if proximity is detected
 
 
 **Installation**
@@ -139,6 +132,7 @@ sudo systemctl status robot-camera-video.service
 
 
 **2. The second usecase is a object/face following robot**
+##########################################################
 The robot will follow an object of a specific color color and size threshold.
 
 A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
@@ -149,22 +143,43 @@ First install dependencies using pip, the installation process will be quite slo
 sudo pip3 install -r /home/pi/robot-camera-platform/navigation/requirements.txt
 ````
 
-In navigation/config.py you'll find:
+
+**Troubleshooting:**
+
+* If the camera module is not working please check [this](https://thepihut.com/blogs/raspberry-pi-tutorials/16021420-how-to-install-use-the-raspberry-pi-camera) official Raspberry pi tutorial first
+
+* I've used opencv to capture the camera image from /dev/video0 so ensure it exists, if not you can try to activate it using:
+
 ````
+sudo modprobe bcm2835-v4l2
+````
+
+**Configuration [optional]**
+
+In navigation/config_navigation.py you'll find:
+````
+# minimum and maximum HSV touples for color object detector
+# the color below is green
 hsv_bounds = (
     (24, 86, 6),
     (77, 255, 255)
 )
-object_size_threshold = (10, 100)
+
+# minimum and maximum object size in percent of image width to be considered a valid detection
+object_size_threshold = (4, 60)
+
+#image is resized by width before processing to increase performance (speed)
+resize_image_by_width = 600
+
+#delay between processing frames, frames are skipped for better performance
+process_image_delay_ms = 300
 ````
 
-- HSV means hue saturation value, and for our color object detection to work it has a lower and
-an upper bound, our object color will have to be in this range to be detected.
+
 [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) you can find a 
 visual HSV object threshold detector.
 
-- Object size threshold means the smallest and the highest object radius size 
-(in percents from width) which will be considered a detection.
+**Running the project:**
 
 Running the object tracking script in VNC graphical interface in a terminal:
 More information of how to install VNC ​[here](https://www.raspberrypi.org/documentation/remote-access/vnc/).
@@ -180,12 +195,14 @@ Running the object tracking script with no video output:
 
 The face follower it's in alpha state right now, it seems to be very slow.
 
+
+
 **3. Building the robot**
 
 First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.
 
 
-** Components **
+**Components**
 
 Fritzing schematic:
 
