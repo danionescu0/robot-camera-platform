@@ -1,5 +1,5 @@
 [Unit]
-Description=Starts robot-camera application video stremming
+Description=Starts robot-camera application video streaming
 After=network-online.target
 
 [Service]

@@ -173,6 +173,9 @@ resize_image_by_width = 600
 
 #delay between processing frames, frames are skipped for better performance
 process_image_delay_ms = 300
+
+# angle to rotate camera in degreeds
+rotate_camera_by = 90
 ````
 
 
@@ -195,7 +198,9 @@ Running the object tracking script with no video output:
 
 The face follower it's in alpha state right now, it seems to be very slow.
 
-
+If you want to give it a try, maby reducing resolution a lot use this:
+ 
+```` python3 object_tracking.py specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video ````
 
 **3. Building the robot**
 

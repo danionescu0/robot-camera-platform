@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser(description='Robot configuration')
 parser.add_argument(
     'detector_type', action='store',
     help='Select detector type available types: colored-object, specific-face. For '
-         'specific face an --extra-cfg is required with an image path containing the face to be followed'
+         'specific face an --extra-cfg is required with an image path containing the face file to be followed'
 )
 parser.add_argument(
     '--extra_cfg', dest='extra_cfg', action='store',
@@ -30,7 +30,7 @@ args = parser.parse_args()
 
 
 serial = Serial(config.serial)  #configure serial
-serial.connect(None)
+serial.connect()
 detector = ObjectDetectorFactory.get(args.detector_type, args.extra_cfg)
 object_follower = ObjectFollower(detector, RobotCommands(), config_navigation.object_size_threshold)
 image_debug = ImageDebug((0, 255, 255), 2)
@@ -44,13 +44,14 @@ while not frame_provider.received_stop():
     frame = frame_provider.get_frame()
     # image is resised by with with some amount in px for better performance
     frame = imutils.resize(frame, width=config_navigation.resize_image_by_width)
-    frame = imutils.rotate(frame, 90)  # image is rotated 90 degreeds due to the robot camera position
+    frame = imutils.rotate(frame, config_navigation.rotate_camera_by)
     object_follower.process(frame)
     if object_follower.has_command():
         command = object_follower.get_command()
         serial.send(object_follower.get_command().encode())
         print('Motor command: {0}'.format(command))
-        image_debug.draw_guidelines(frame, object_follower.get_center(), object_follower.get_radius())
+        if args.video:
+            image_debug.draw_guidelines(frame, object_follower.get_center(), object_follower.get_radius())
     if args.video:
         cv2.imshow('frame', frame)
 

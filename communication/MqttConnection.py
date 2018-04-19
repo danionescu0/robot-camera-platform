@@ -1,6 +1,7 @@
-import paho.mqtt.client as mqtt
 from typing import Callable
 import codecs
+
+import paho.mqtt.client as mqtt
 
 
 class MqttConnection():
@@ -12,24 +13,27 @@ class MqttConnection():
         self.__port = port
         self.__user = user
         self.__password = password
+        self.__callback = None
+        self.__client = None
 
-    def connect(self, receive_message_callback: Callable[[codecs.StreamReader], None]):
-        self.__receive_message_callback = receive_message_callback
-        self.client = mqtt.Client()
+    def connect(self):
+        self.__client = mqtt.Client()
 
         def on_connect(client, userdata, flags, rc):
-            self.client.subscribe(self.MOVEMENT_CHANNEL)
+            self.__client.subscribe(self.MOVEMENT_CHANNEL)
 
         def on_message(client, userdata, msg):
-            self.__receive_message_callback(msg.payload)
+            if self.__callback is not None:
+                self.__callback(msg.payload)
 
-        self.client.on_connect = on_connect
-        self.client.on_message = on_message
-        self.client.username_pw_set(self.__user, self.__password)
-        self.client.connect_async(self.__host, self.__port, 60)
+        self.__client.on_connect = on_connect
+        self.__client.on_message = on_message
+        self.__client.username_pw_set(self.__user, self.__password)
+        self.__client.connect_async(self.__host, self.__port, 60)
+        self.__client.loop_start()
 
-    def listen(self):
-        self.client.loop_start()
+    def listen(self, callback: Callable[[codecs.StreamReader], None]):
+        self.__callback = callback
 
     def send(self, channel : str, message : str):
-        self.client.publish(channel, message, 2)
+        self.__client.publish(channel, message, 2)
