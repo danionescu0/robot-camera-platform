@@ -24,7 +24,9 @@ parser.add_argument(
     '--extra_cfg', dest='extra_cfg', action='store',
     help='Extra parameter for detector_type'
 )
-parser.add_argument('--show-video', dest='video', action='store_true', help='shows images on desktop')
+parser.add_argument('--show-video', dest='video', action='store_true', help='shows images on GUI')
+parser.add_argument('--camera_device', dest='camera', type=int, default=0)
+
 parser.set_defaults(feature=False)
 args = parser.parse_args()
 
@@ -35,10 +37,10 @@ detector = ObjectDetectorFactory.get(args.detector_type, args.extra_cfg)
 object_follower = ObjectFollower(detector, RobotCommands(), config_navigation.object_size_threshold)
 image_debug = ImageDebug((0, 255, 255), 2)
 frame_provider = FrameProvider(config_navigation.process_image_delay_ms)
-frame_provider.start()
+frame_provider.start(args.camera)
 
 
-while not frame_provider.received_stop():
+while not cv2.waitKey(30) & 0xFF == ord('q'):
     if not frame_provider.has_frame():
         continue
     frame = frame_provider.get_frame()

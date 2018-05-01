@@ -202,6 +202,9 @@ If you want to give it a try, maby reducing resolution a lot use this:
  
 ```` python3 object_tracking.py specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video ````
 
+You can specify other camera source then /dev/video0 by using --camera_device camera_number. If you have more then one
+video cameras mounted and you want to user the second /dev/video1 use: --camera_device 1
+
 **3. Building the robot**
 
 First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.

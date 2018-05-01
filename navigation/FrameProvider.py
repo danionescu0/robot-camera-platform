@@ -9,15 +9,12 @@ class FrameProvider:
         self.__video_capture = None
         self.__last_run = None
 
-    def start(self):
-        self.__video_capture = cv2.VideoCapture(0)  # start video capture from raspberry pi camera
+    def start(self, camera_device: int):
+        self.__video_capture = cv2.VideoCapture(camera_device)
         self.__last_run = self.__get_current_millis()
 
     def stop(self):
         self.__video_capture.release()
-
-    def received_stop(self):
-        return cv2.waitKey(30) & 0xFF == ord('q')
 
     def get_frame(self):
         ret, frame = self.__video_capture.read()
