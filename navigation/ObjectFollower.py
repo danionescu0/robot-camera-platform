@@ -1,10 +1,13 @@
+
 from navigation.MathUtils import MathUtils
 from navigation.ObjectDetector import ObjectDetector
 from navigation.RobotCommands import RobotCommands
 from communication.Serial import Serial
 
+
 class ObjectFollower:
-    SPEED = 30
+    __MIN_SPEED_PERCENT = 10
+    __MAX_SPEED_PERCENT = 33
 
     def __init__(self, object_detector: ObjectDetector, robot_commands: RobotCommands,
                  object_size_threshold) -> None:
@@ -30,9 +33,12 @@ class ObjectFollower:
     def get_command(self) -> str:
         if not self.has_command():
             return None
-        angle = self.__get_angle(self.__center, self.__image)
 
-        return self.__robot_commands.steer(angle, self.SPEED, self.__should_move_forward()) + Serial.MESSAGE_TERMINATOR
+        return self.__robot_commands.steer(
+                    self.__get_angle(self.__center, self.__image),
+                    self.__get_speed_percent(self.__radius, self.__image),
+                    True) +\
+               Serial.MESSAGE_TERMINATOR
 
     def get_center(self):
         return self.__center
@@ -42,18 +48,25 @@ class ObjectFollower:
 
     def __is_detection_in_range(self):
         height, width, channels = self.__image.shape
-        minimum_object_size = int(self.__object_size_threshold[0] * width / 100)
-        maximum_object_size = int(self.__object_size_threshold[1] * width / 100)
+        minimum_object_size, maximum_object_size = self.__get_object_bounded_sizes(width)
         if 2 * self.__radius >= minimum_object_size and self.__radius * 2 <= maximum_object_size:
             return True
 
         return False
 
-    def __should_move_forward(self):
-        return True
+    def __get_object_bounded_sizes(self, actual_object_width):
+        return int(self.__object_size_threshold[0] * actual_object_width / 100), \
+               int(self.__object_size_threshold[1] * actual_object_width / 100)
 
-    def __get_angle(self, center, image):
+    def __get_angle(self, center: tuple, image):
         height, width, channels = image.shape
         x_coordonate = center[0]
 
         return MathUtils.remap(x_coordonate, 0, width, RobotCommands.MIN_ANGLE, RobotCommands.MAX_ANGLE)
+
+    def __get_speed_percent(self, radius, image):
+        height, width, channels = image.shape
+        minimum_object_size, maximum_object_size = self.__get_object_bounded_sizes(width)
+
+        return MathUtils.remap(radius * 2, minimum_object_size, maximum_object_size,
+                               self.__MAX_SPEED_PERCENT, self.__MIN_SPEED_PERCENT)
