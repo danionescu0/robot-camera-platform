@@ -143,6 +143,14 @@ First install dependencies using pip, the installation process will be quite slo
 sudo pip3 install -r /home/pi/robot-camera-platform/navigation/requirements.txt
 ````
 
+*Unit tests*
+
+Unit tests are using [nose2](http://nose2.readthedocs.io/en/latest/index.html)
+
+In console run with:
+````
+nose2
+````
 
 **Troubleshooting:**
 

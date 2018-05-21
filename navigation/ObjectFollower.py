@@ -14,42 +14,37 @@ class ObjectFollower:
         self.__object_detector = object_detector
         self.__robot_commands = robot_commands
         self.__object_size_threshold = object_size_threshold
-        self.__radius = 0
-        self.__center = (False, False)
+        self.radius = 0
+        self.center = (0, 0)
         self.__image = None
 
     def process(self, image):
-        self.__center, radius = self.__object_detector.find(image)
-        self.__radius = int(radius)
+        self.center, radius = self.__object_detector.find(image)
+        self.radius = int(radius)
         self.__image = image
 
         return self
 
     def has_command(self) -> bool:
-        if self.__center is False or not self.__is_detection_in_range():
+        if self.center is False or not self.__is_detection_in_range():
             return False
+
         return True
 
     def get_command(self) -> str:
         if not self.has_command():
             return None
 
-        return self.__robot_commands.steer(
-                    self.__get_angle(self.__center, self.__image),
-                    self.__get_speed_percent(self.__radius, self.__image),
+        return self.__robot_commands.get_steer_command(
+                    self.__get_angle(self.center, self.__image),
+                    self.__get_speed_percent(self.radius, self.__image),
                     True) +\
                Serial.MESSAGE_TERMINATOR
-
-    def get_center(self):
-        return self.__center
-
-    def get_radius(self):
-        return self.__radius
 
     def __is_detection_in_range(self):
         height, width, channels = self.__image.shape
         minimum_object_size, maximum_object_size = self.__get_object_bounded_sizes(width)
-        if 2 * self.__radius >= minimum_object_size and self.__radius * 2 <= maximum_object_size:
+        if 2 * self.radius >= minimum_object_size and self.radius * 2 <= maximum_object_size:
             return True
 
         return False

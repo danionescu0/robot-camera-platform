@@ -9,13 +9,13 @@ class RobotCommands:
     MAX_ANGLE = 180
     MIN_ANGLE = 0
 
-    def steer(self, angle: int, percent_power: int, forward: bool) -> str:
+    def get_steer_command(self, angle: int, percent_power: int, forward: bool) -> str:
         direction = self.__get_converted_direction(angle)
         power = self.__get_converted_power(percent_power, forward)
 
         return self.MOTOR_COMMAND.format(direction, power)
 
-    def switch_lights(self, state: bool) -> str:
+    def get_switch_lights_command(self, state: bool) -> str:
         literal_state = {True: '1', False: '0'}
 
         return self.LIGHT_COMMAND.format(literal_state[state])
