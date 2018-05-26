@@ -6,7 +6,11 @@ and a object tracker but there can be more, i'll leave this to your imagination 
 
 1. Surveillence robot usecase
 
+![android-app-screenshot1.jpg](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/android-app-screenshot1.jpg)
+
 2. Object follower usecase
+
+![object-follower-example1.png](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/object-follower-example1.png)
 
 3. Building the robot parts & schameatics
 
@@ -40,7 +44,7 @@ using serial interface to the arduino board. The arduino board controlls the mot
 d. The arduino board senses distances in front and back of the robot and sends the data through the serial interface to the 
 python server, the python forwards them to the MQTT and they get picked up by the android interface and shown to the user
 
-![ifttt.png](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/flow-diagram.png)
+![flow-diagram.png](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/flow-diagram.png)
 
 **Why does an intermediary arduino layer has to exist and not directly the Pi ?**
 

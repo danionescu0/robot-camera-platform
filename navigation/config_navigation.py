@@ -9,7 +9,7 @@ hsv_bounds = (
 object_size_threshold = (4, 60)
 
 #image is resized by width before processing to increase performance (speed)
-resize_image_by_width = 400
+resize_image_by_width = 600
 
 #delay between processing frames, frames are skipped for better performance
 process_image_delay_ms = 100

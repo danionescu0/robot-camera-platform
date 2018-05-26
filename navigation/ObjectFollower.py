@@ -9,8 +9,7 @@ class ObjectFollower:
     __MIN_SPEED_PERCENT = 10
     __MAX_SPEED_PERCENT = 33
 
-    def __init__(self, object_detector: ObjectDetector, robot_commands: RobotCommands,
-                 object_size_threshold) -> None:
+    def __init__(self, object_detector: ObjectDetector, robot_commands: RobotCommands, object_size_threshold) -> None:
         self.__object_detector = object_detector
         self.__robot_commands = robot_commands
         self.__object_size_threshold = object_size_threshold
@@ -26,7 +25,7 @@ class ObjectFollower:
         return self
 
     def has_command(self) -> bool:
-        if self.center is False or not self.__is_detection_in_range():
+        if self.radius == 0 or not self.__is_detection_in_range():
             return False
 
         return True
@@ -35,6 +34,8 @@ class ObjectFollower:
         if not self.has_command():
             return None
 
+        print(self.__get_angle(self.center, self.__image))
+        print(self.__get_speed_percent(self.radius, self.__image))
         return self.__robot_commands.get_steer_command(
                     self.__get_angle(self.center, self.__image),
                     self.__get_speed_percent(self.radius, self.__image),
