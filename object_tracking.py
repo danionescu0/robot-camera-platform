@@ -7,7 +7,7 @@ import config
 from communication.Serial import Serial
 from navigation import config_navigation
 from navigation.ObjectFollower import ObjectFollower
-from navigation.RobotCommands import RobotCommands
+from navigation.RobotSerialCommandsConverter import RobotSerialCommandsConverter
 from navigation.ObjectDetectorFactory import ObjectDetectorFactory
 from navigation.ImageDebug import ImageDebug
 from navigation.FrameProvider import FrameProvider
@@ -34,7 +34,7 @@ args = parser.parse_args()
 serial = Serial(config.serial)  #configure serial
 serial.connect()
 detector = ObjectDetectorFactory.get(args.detector_type, args.extra_cfg)
-object_follower = ObjectFollower(detector, RobotCommands(), config_navigation.object_size_threshold)
+object_follower = ObjectFollower(detector, RobotSerialCommandsConverter(), config_navigation.object_size_threshold)
 image_debug = ImageDebug((0, 255, 255), 2)
 frame_provider = FrameProvider(config_navigation.process_image_delay_ms)
 frame_provider.start(args.camera)

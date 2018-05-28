@@ -1,7 +1,7 @@
 from navigation.MathUtils import MathUtils
 
 
-class RobotCommands:
+class RobotSerialCommandsConverter:
     POWER_LIMITS = {'forward' : {'max' : 50, 'min' : 0}, 'backward' : {'max' : -50, 'min' : 0}}
     DIRECTION_LIMITS = {'right' : 50, 'left' : -50}
     MOTOR_COMMAND = 'M:{0}:{1}'

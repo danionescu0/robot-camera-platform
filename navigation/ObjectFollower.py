@@ -1,15 +1,15 @@
 
 from navigation.MathUtils import MathUtils
 from navigation.ObjectDetector import ObjectDetector
-from navigation.RobotCommands import RobotCommands
+from navigation.RobotSerialCommandsConverter import RobotSerialCommandsConverter
 from communication.Serial import Serial
 
 
 class ObjectFollower:
-    __MIN_SPEED_PERCENT = 10
+    __MIN_SPEED_PERCENT = 20
     __MAX_SPEED_PERCENT = 33
 
-    def __init__(self, object_detector: ObjectDetector, robot_commands: RobotCommands, object_size_threshold) -> None:
+    def __init__(self, object_detector: ObjectDetector, robot_commands: RobotSerialCommandsConverter, object_size_threshold) -> None:
         self.__object_detector = object_detector
         self.__robot_commands = robot_commands
         self.__object_size_threshold = object_size_threshold
@@ -34,8 +34,6 @@ class ObjectFollower:
         if not self.has_command():
             return None
 
-        print(self.__get_angle(self.center, self.__image))
-        print(self.__get_speed_percent(self.radius, self.__image))
         return self.__robot_commands.get_steer_command(
                     self.__get_angle(self.center, self.__image),
                     self.__get_speed_percent(self.radius, self.__image),
@@ -58,7 +56,7 @@ class ObjectFollower:
         height, width, channels = image.shape
         x_coordonate = center[0]
 
-        return MathUtils.remap(x_coordonate, 0, width, RobotCommands.MIN_ANGLE, RobotCommands.MAX_ANGLE)
+        return MathUtils.remap(x_coordonate, 0, width, RobotSerialCommandsConverter.MIN_ANGLE, RobotSerialCommandsConverter.MAX_ANGLE)
 
     def __get_speed_percent(self, radius, image):
         height, width, channels = image.shape
