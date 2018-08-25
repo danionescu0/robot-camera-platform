@@ -9,7 +9,8 @@ class ObjectFollower:
     __MIN_SPEED_PERCENT = 20
     __MAX_SPEED_PERCENT = 33
 
-    def __init__(self, object_detector: ObjectDetector, robot_commands: RobotSerialCommandsConverter, object_size_threshold) -> None:
+    def __init__(self, object_detector: ObjectDetector, robot_commands: RobotSerialCommandsConverter,
+                 object_size_threshold) -> None:
         self.__object_detector = object_detector
         self.__robot_commands = robot_commands
         self.__object_size_threshold = object_size_threshold
@@ -18,9 +19,10 @@ class ObjectFollower:
         self.__image = None
 
     def process(self, image):
-        self.center, radius = self.__object_detector.find(image)
-        self.radius = int(radius)
+        self.__object_detector.process(image)
         self.__image = image
+        if self.__object_detector.detected:
+            self.center, self.radius = self.__object_detector.circle_coordonates
 
         return self
 
