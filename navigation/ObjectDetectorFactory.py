@@ -1,7 +1,9 @@
+from navigation import config_navigation
 from navigation.ObjectDetector import ObjectDetector
 from navigation.ColoredObjectDetector import ColoredObjectDetector
 from navigation.SpecificFaceDetector import SpecificFaceDetector
-from navigation import config_navigation
+from navigation.FaceRecognitionProcessWrapper import FaceRecognitionProcessWrapper
+from navigation.FaceRecognition import FaceRecognition
 
 
 class ObjectDetectorFactory:
@@ -20,7 +22,9 @@ class ObjectDetectorFactory:
 
     @staticmethod
     def __get_specific_face_detector(extra_configuration):
-        detector = SpecificFaceDetector(extra_configuration)
-        detector.configure()
+        face_recognition = FaceRecognition(extra_configuration)
+        face_recognition.configure()
+        face_recognition_process_wrapper = FaceRecognitionProcessWrapper(face_recognition, 1)
+        face_recognition_process_wrapper.start()
 
-        return detector
+        return SpecificFaceDetector(face_recognition_process_wrapper)

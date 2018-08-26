@@ -10,9 +10,6 @@ class ObjectDetector(metaclass=abc.ABCMeta):
     def process(self, image):
         pass
 
-    def configure(self):
-        pass
-
     @property
     def detected(self):
         return self._detected

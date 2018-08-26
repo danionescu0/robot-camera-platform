@@ -1,22 +1,22 @@
-**What is this?**
+# What is this?
 
   This is the versatile robot platform. I've gave it to possible usecases: a surveillence bot
 and a object tracker but there can be more, i'll leave this to your imagination :)
 
 
-1. Surveillence robot usecase
+# 1. Surveillence robot usecase
 
 ![android-app-screenshot1.jpg](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/android-app-screenshot1.jpg)
 
-2. Object follower usecase
+# 2. Object follower usecase
 
 ![object-follower-example1.png](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/object-follower-example1.png)
 
-3. Building the robot parts & schameatics
+# 3. Building the robot parts & schameatics
 
 
 
-**1. The first usecase is a surveillence robot that is controlled using an android interface:**
+# 1. The first usecase is a surveillence robot that is controlled using an android interface:**
 ###############################################################################################
 
 Full tutorial on [instructables](https://www.instructables.com/id/Android-Controlled-Robot-Spy-Camera/)
@@ -135,9 +135,10 @@ sudo systemctl status robot-camera-video.service
 
 
 
-**2. The second usecase is a object/face following robot**
-##########################################################
+# 2. The second usecase is a object/face following robot
+
 The robot will follow an object of a specific color color and size threshold.
+
 
 A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
 
@@ -194,7 +195,7 @@ rotate_camera_by = 90
 [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) you can find a 
 visual HSV object threshold detector.
 
-**Running the project:**
+**Running the project:
 
 Running the object tracking script in VNC graphical interface in a terminal:
 More information of how to install VNC ​[here](https://www.raspberrypi.org/documentation/remote-access/vnc/).
@@ -217,7 +218,29 @@ If you want to give it a try, maby reducing resolution a lot use this:
 You can specify other camera source then /dev/video0 by using --camera_device camera_number. If you have more then one
 video cameras mounted and you want to user the second /dev/video1 use: --camera_device 1
 
-**3. Building the robot**
+** How does the image detection works ?**
+
+** 1. colored object detector **
+- First the image is converted to HSV
+- Using the function "inRange" HSV ranges are applied to the image (the ranges are defined in the the config)
+- Erode and Dilate opencv functions are applied to make the interest zones more clear
+- FindContours functon is applied and we select the largest contour (the largest colored object)
+- From our selected contour we apply "minEnclosingCircle" and "moments" to get the coordonates of a circle that 
+will best enclose our largest colored object 
+
+For the code you ca view "ColoredObjectDetector.py" file
+
+**2.face recognition**
+
+For the face recognition we're using "face_recognition" library to extract our specific face of interst from the image.
+
+The problem is this library is quite slow on a development board even if we scale the image, so after a positive face is found
+we'll use a new adition to Opencv 3.4 object trackers. These trackers are quite fast but far less accurate than "face_detection" technique
+
+For the code you ca view "SpecificFaceDetector.py" file
+
+
+# 3. Building the robot
 
 First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.
 
