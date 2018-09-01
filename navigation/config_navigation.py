@@ -9,7 +9,7 @@ hsv_bounds = (
 object_size_threshold = (4, 60)
 
 #image is resized by width before processing to increase performance (speed)
-resize_image_by_width = 200
+resize_image_by_width = 300
 
 # angle to rotate camera in degreeds
 rotate_camera_by = 90

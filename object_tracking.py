@@ -49,8 +49,7 @@ while not cv2.waitKey(30) & 0xFF == ord('q'):
         command = object_follower.get_command()
         serial.send(object_follower.get_command().encode())
         print('Motor command: {0}'.format(command))
-        if args.video:
-            image_debug.draw_guidelines(frame, object_follower.center, object_follower.radius)
+        image_debug.draw_guidelines(frame, object_follower.center, object_follower.radius)
     if args.video:
         cv2.imshow('frame', frame)
 

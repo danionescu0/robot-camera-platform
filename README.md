@@ -1,8 +1,15 @@
 # What is this?
 
-  This is the versatile robot platform. I've gave it to possible usecases: a surveillence bot
-and a object tracker but there can be more, i'll leave this to your imagination :)
+  This is the versatile robot platform. I've gave it to possible usecases: a surveillence robot for home
+and a object tracker robot.
 
+  This is a research project fun to build and fun to explore and we'll take on the following concepts and technologies:
+  
+* programming: Computer vision, Python, Arduino (C++), Java for Android
+ 
+* miscelanious: MQTT, Docker, Docker compose, UV4l, linux services
+
+* electronics: Raspberry pi, Arduino, H-Bridge, DC motors, sensors, soldering, building a robot etc
 
 # 1. Surveillence robot usecase
 
@@ -22,13 +29,6 @@ and a object tracker but there can be more, i'll leave this to your imagination 
 Full tutorial on [instructables](https://www.instructables.com/id/Android-Controlled-Robot-Spy-Camera/)
 
 A video demo is available on [youtube](https://youtu.be/6FrEs4C9D-Y)
-
-The robot will stream the video using [UV4l](http://www.linux-projects.org/uv4l/)
-
-The python server will receive commands using mqtt from the android application, and will transmit 
-distance in front and behind the robot.
-
-The android application is located in this [repository](https://github.com/danionescu0/android-robot-camera)
 
 
 **How does it work**
@@ -56,6 +56,12 @@ a few times per second
 * if an error might occur in the python script the robot might run forever draining the
 batteries and probably damaging it or catching fire if not supervised, in an arduino sketch
 a safeguard it's more reliable because it does not depends on an operating system
+
+**Extra**
+
+The robot will stream the video using [UV4l](http://www.linux-projects.org/uv4l/)
+
+The android application is located in this [repository](https://github.com/danionescu0/android-robot-camera)
 
 
 **Installation**
@@ -137,12 +143,17 @@ sudo systemctl status robot-camera-video.service
 
 # 2. The second usecase is a object/face following robot
 
-The robot will follow an object of a specific color color and size threshold.
+The robot is able to follow 
 
-
+- objects of a specific color
 A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
 
-First install dependencies using pip, the installation process will be quite slow
+- a known face
+
+
+First install dependencies using pip, the installation process will be slow. You may need to manually compile opencv
+to the required version 3.4.2. For this purpose see this tutorial https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/
+and be sure to replace 3.3.0 with 3.4.2
 
 ````
 sudo pip3 install -r /home/pi/robot-camera-platform/navigation/requirements.txt
@@ -182,20 +193,18 @@ hsv_bounds = (
 object_size_threshold = (4, 60)
 
 #image is resized by width before processing to increase performance (speed)
-resize_image_by_width = 600
-
-#delay between processing frames, frames are skipped for better performance
-process_image_delay_ms = 300
+resize_image_by_width = 300
 
 # angle to rotate camera in degreeds
 rotate_camera_by = 90
 ````
 
+If you want to modify "hsv_bounds" [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) is a python helper for HSV range detection 
 
-[Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) you can find a 
-visual HSV object threshold detector.
+Increasing "resize_image_by_width" will result in more accurate detection but slow processing times.
 
-**Running the project:
+
+**Running the project:**
 
 Running the object tracking script in VNC graphical interface in a terminal:
 More information of how to install VNC ​[here](https://www.raspberrypi.org/documentation/remote-access/vnc/).
@@ -209,16 +218,15 @@ Running the object tracking script with no video output:
 
 ```` python3 object_tracking.py colored-object ````
 
-The face follower it's in alpha state right now, it seems to be very slow.
+The face follower it's in beta state right now, it seems to be quyte slow, it only processes about between one and 
+two frames per second on a Raspberr pi 3.
 
-If you want to give it a try, maby reducing resolution a lot use this:
+If you want to give it a try use this:
  
 ```` python3 object_tracking.py specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video ````
 
-You can specify other camera source then /dev/video0 by using --camera_device camera_number. If you have more then one
-video cameras mounted and you want to user the second /dev/video1 use: --camera_device 1
 
-** How does the image detection works ?**
+**How does the image detection works ?**
 
 ** 1. colored object detector **
 - First the image is converted to HSV
@@ -230,19 +238,23 @@ will best enclose our largest colored object
 
 For the code you ca view "ColoredObjectDetector.py" file
 
-**2.face recognition**
+**2. face recognition**
 
 For the face recognition we're using "face_recognition" library to extract our specific face of interst from the image.
 
-The problem is this library is quite slow on a development board even if we scale the image, so after a positive face is found
-we'll use a new adition to Opencv 3.4 object trackers. These trackers are quite fast but far less accurate than "face_detection" technique
+The problem is this library is quite slow on a development board even if we scale the image to 300 x 300 it takes more than a second for a detection.
+We'll use a new adition to Opencv 3.4 object trackers. These trackers are quite fast but far less accurate than "face_detection" technique
 
-For the code you ca view "SpecificFaceDetector.py" file
+So i'm combining the two detectors to build a compromise between the two. First the "face_recognition" library runs in a different async process,
+and when a face is found, it communicates to the faster library the face coordonates. 
+The faster method is called "TrackerCSRT_create" from the opencv library and it's able to run syncronious on the pi, processing frame by frame and help guide the robot.
+
+For the code you can start with "SpecificFaceDetector.py" file
 
 
 # 3. Building the robot
 
-First a bit about the hardware. The arduino sketch can be found in arduino-sketck folder.
+The arduino sketch can be found in arduino-sketck folder.
 
 
 **Components**

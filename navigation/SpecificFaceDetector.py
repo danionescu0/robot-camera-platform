@@ -16,12 +16,13 @@ class SpecificFaceDetector(ObjectDetector):
         original_image, coordonates = self.__face_recognition.get_result()
         if original_image is not None:
             x, y, x1, y1 = coordonates
-            self.__tracker = cv2.TrackerKCF_create()
+            self.__tracker = cv2.TrackerCSRT_create()
             self.__tracker.init(original_image, (x, y, (x1 - x), abs(y1 - y)))
             return
 
         if self.__tracker is None:
             return
+
         (success, box) = self.__tracker.update(image)
         if success:
             (x, y, w, h) = [int(v) for v in box]
