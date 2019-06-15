@@ -1,4 +1,4 @@
-FROM resin/rpi-raspbian:jessie
+FROM resin/rpi-raspbian:jessie:jessie-20180109
 
 RUN apt-get update && apt-get install -y wget
 
