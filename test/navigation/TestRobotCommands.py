@@ -14,5 +14,5 @@ class TestRobotCommands(unittest.TestCase):
 
     def test_light(self):
         robot_commands = RobotSerialCommandsConverter()
-        self.assertEqual(robot_commands.get_switch_lights_command(True), 'L:1')
-        self.assertEqual(robot_commands.get_switch_lights_command(False), 'L:0')
+        self.assertEqual(robot_commands.get_lights_command(True), 'L:1')
+        self.assertEqual(robot_commands.get_lights_command(False), 'L:0')

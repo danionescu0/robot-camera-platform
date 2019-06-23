@@ -29,7 +29,7 @@ parser.add_argument('--show-video', dest='video', action='store_true', help='sho
 parser.set_defaults(feature=False)
 args = parser.parse_args()
 
-serial = Serial(config.serial)  #configure serial
+serial = Serial(config.serial['port'], config.serial['baud_rate'])
 serial.connect()
 detector = ObjectDetectorFactory.get(args.detector_type, args.extra_cfg)
 object_follower = ObjectFollower(detector, RobotSerialCommandsConverter(), config_navigation.object_size_threshold)
@@ -39,6 +39,8 @@ frame_provider = VideoStream(usePiCamera=True, resolution=(1024, 768)).start()
 time.sleep(2.0)
 
 
+# main loop where we read frames, resise and rotate them
+# find the objects, and get the motor commands for moving the robot
 while not cv2.waitKey(30) & 0xFF == ord('q'):
     frame = frame_provider.read()
     # image is resised by with with some amount in px for better performance

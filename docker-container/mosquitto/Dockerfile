@@ -12,4 +12,5 @@ RUN echo "" > /etc/mosquitto/pwfile
 RUN mosquitto_passwd -b /etc/mosquitto/pwfile user your_password
 
 EXPOSE 1883
+
 CMD /usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf

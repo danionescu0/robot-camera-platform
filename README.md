@@ -1,15 +1,22 @@
 # What is this?
 
-  This is the versatile robot platform. I've gave it to possible usecases: a surveillence robot for home
-and a object tracker robot.
+  This is the versatile robot platform. I've gave it a few usecases: 
+ 
+* a surveillence robot for home
+
+* a object follower
+
+* remote controll over alexa echo dot
 
   This is a research project fun to build and fun to explore and we'll take on the following concepts and technologies:
   
-* programming: Computer vision, Python, Arduino (C++), Java for Android
+* programming: Computer vision, Python, Arduino (C++), Java for Android, AWS
  
 * miscelanious: MQTT, Docker, Docker compose, UV4l, linux services
 
 * electronics: Raspberry pi, Arduino, H-Bridge, DC motors, sensors, soldering, building a robot etc
+
+
 
 # 1. Surveillence robot usecase
 
@@ -19,8 +26,36 @@ and a object tracker robot.
 
 ![object-follower-example1.png](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/object-follower-example1.png)
 
-# 3. Building the robot parts & schameatics
+# 3. Alexa voice robot commands demo
 
+# 4. Building the robot parts & schameatics
+
+
+**Workarounds for not having a public ip on your dev board**
+
+* the simplest way is tu use a public proxy like https://ngrok.com/ https://ngrok.com/docs#multiple-tunnels
+
+* you can port forward 1883 and 9090 ports on your router
+
+
+**Why does an intermediary arduino layer has to exist and not directly the Pi ?**
+
+* it's more modular, you can reuse the arduino robot in another project without the PI
+* for safety, it's cheaper to replace a 3$ arduino pro mini than to replace a Pi (35$)
+* an arduino it's not intrerupted by the operating system like the pi is, so it's more 
+efficient to implement PWM controlls for the mottors, polling the front and back sensors
+a few times per second
+* if an error might occur in the python script the robot might run forever draining the
+batteries and probably damaging it or catching fire if not supervised, in an arduino sketch
+a safeguard it's more reliable because it does not depends on an operating system
+
+**Prerequisites**
+
+a. Ensure that your development board has an serial port. If your're using a Raspberry pi please ensure that 
+the serial console it's disabled and the port can be used. In the config i've assumed it's on /dev/ttyS0
+
+b. Your board works with a camera. If it's raspberry pi and picamera, ensure the camera is connected and 
+enabled through raspi-config.
 
 
 # 1. The first usecase is a surveillence robot that is controlled using an android interface:**
@@ -46,16 +81,6 @@ python server, the python forwards them to the MQTT and they get picked up by th
 
 ![flow-diagram.png](https://github.com/danionescu0/robot-camera-platform/blob/master/resources/flow-diagram.png)
 
-**Why does an intermediary arduino layer has to exist and not directly the Pi ?**
-
-* it's more modular, you can reuse the arduino robot in another project without the PI
-* for safety, it's cheaper to replace a 3$ arduino pro mini than to replace a Pi (35$)
-* an arduino it's not intrerupted by the operating system like the pi is, so it's more 
-efficient to implement PWM controlls for the mottors, polling the front and back sensors
-a few times per second
-* if an error might occur in the python script the robot might run forever draining the
-batteries and probably damaging it or catching fire if not supervised, in an arduino sketch
-a safeguard it's more reliable because it does not depends on an operating system
 
 **Extra**
 
@@ -66,19 +91,11 @@ The android application is located in this [repository](https://github.com/danio
 
 **Installation**
 
-
-*Install Uv4l streamming:*
- 
-````
-chmod +x uv4l/install.sh
-chmod +x uv4l/start.sh
-sh ./uv4l/install.sh 
-````
 A complete tutorial about uv4l is found here: https://www.instructables.com/id/Raspberry-Pi-Video-Streaming/?ALLSTEPS
 
 
 
-*Clone the project in the home folder:*
+**Clone the project in the home folder:**
 ````
 git clone https://github.com/danionescu0/robot-camera-platform
 ````
@@ -86,22 +103,26 @@ The folder location it's important because in docker-compose.yml the location is
 If you need to change the location, please change the value in docker-compose too
 
 
-*Configuration:*
+**Install Uv4l streamming:**
+ 
+````
+chmod +x uv4l/install.sh
+chmod +x uv4l/start.sh
+sh ./uv4l/install.sh 
+````
+
+**Configure the project:**
 
 * by editing uv4l/start.sh you can configure the following aspects of the video streaming: password,
 port, framerate, with, height, rotation and some other minor aspects
 * edit config.py and replace password with your own password that you've set on the mosquitto server
-* edit docker-container/mosquitto/Dockerfile and replace this line
+* edit docker-container/mosquitto/Dockerfile and replace this line with your own user and password for mosquitto
 ````
 RUN mosquitto_passwd -b /etc/mosquitto/pwfile user your_password
 ````
 
-with your own user and password for mosquitto
 
-* optional you can change the baud rate (default 9600) and don't forget to edit that on the arduino-sketch too
-
-
-*Test uv4l installation*
+**Test uv4l installation**
 
 a. Start it:
 ````
@@ -115,7 +136,7 @@ sudo pkill uv4l
 ````
 
 
-*Install docker and docker-compose*
+**Install docker and docker-compose**
 
 About docker installation: https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
 About docker-compose installation: https://www.berthon.eu/2017/getting-docker-compose-on-raspberry-pi-arm-the-easy-way/
@@ -139,31 +160,40 @@ sudo systemctl status robot-camera.service
 sudo systemctl status robot-camera-video.service
 ````
 
+**Build and install the Android app**
+
+a. Clone the repository
+````
+git clone https://github.com/danionescu0/android-robot-camera.git
+````
+
+b. Follow the instructions there to configure and build it
 
 
-# 2. The second usecase is a object/face following robot
+
+
+# 2. Object follower usecase
 
 The robot is able to follow 
 
-- objects of a specific color
-A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY)
+- objects of a specific color (A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY))
 
-- a known face
+- a known face (this is slow on raspberry pi 3)
 
-
+**Install dependencies**
 First install dependencies using pip, the installation process will be slow. You may need to manually compile opencv
 to the required version 3.4.2. For this purpose see this tutorial https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/
 and be sure to replace 3.3.0 with 3.4.2
 
 ````
-sudo pip3 install -r /home/pi/robot-camera-platform/navigation/requirements.txt
+sudo pip3 install -r /home/pi/robot-camera-platform/requirements_object_follower.txt
 ````
 
-*Unit tests*
+**Optional run unit tests**
 
 Unit tests are using [nose2](http://nose2.readthedocs.io/en/latest/index.html)
 
-In console run with:
+In console run:
 ````
 nose2
 ````
@@ -221,14 +251,14 @@ Running the object tracking script with no video output:
 The face follower it's in beta state right now, it seems to be quyte slow, it only processes about between one and 
 two frames per second on a Raspberr pi 3.
 
-If you want to give it a try use this:
+If you want to give it a try use this.
  
 ```` python3 object_tracking.py specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video ````
 
 
 **How does the image detection works ?**
 
-** 1. colored object detector **
+**1. colored object detector**
 - First the image is converted to HSV
 - Using the function "inRange" HSV ranges are applied to the image (the ranges are defined in the the config)
 - Erode and Dilate opencv functions are applied to make the interest zones more clear
@@ -252,7 +282,20 @@ The faster method is called "TrackerCSRT_create" from the opencv library and it'
 For the code you can start with "SpecificFaceDetector.py" file
 
 
-# 3. Building the robot
+
+# 3. Alexa voice robot commands demo
+
+Work in progress !!
+For this you'll need Alexa Echo Dot speaker: https://www.amazon.com/All-new-Echo-Dot-3rd-Gen/dp/B0792KTHKJ
+
+The Android / IOS application (check out this guide for pair: https://www.techradar.com/how-to/amazon-echo-setup)
+
+Also you'll need an developer amazon account and an AWS account: https://developer.amazon.com and https://console.aws.amazon.com
+
+
+
+
+# 4. Building the robot
 
 The arduino sketch can be found in arduino-sketck folder.
 

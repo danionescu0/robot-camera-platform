@@ -1,7 +1,7 @@
 # minimum and maximum HSV touples for color object detector
 # the color below is green
 hsv_bounds = (
-    (73, 45, 89),
+    (46, 83, 0),
     (85, 255, 212)
 )
 
@@ -9,7 +9,7 @@ hsv_bounds = (
 object_size_threshold = (4, 60)
 
 #image is resized by width before processing to increase performance (speed)
-resize_image_by_width = 300
+resize_image_by_width = 700
 
 # angle to rotate camera in degreeds
 rotate_camera_by = 90

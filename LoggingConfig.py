@@ -1,6 +1,7 @@
 import logging
 import logging.handlers
 
+
 class LoggingConfig():
     def __init__(self, filename: str, max_bytes: int):
         self.__filename = filename
@@ -26,13 +27,11 @@ class LoggingConfig():
             level = logging.DEBUG
         else:
             level = logging.WARNING
-
         self.__root_logger.setLevel(level)
         for h in handlers:
             h.setFormatter(formatter)
             h.setLevel(level)
             self.__root_logger.addHandler(h)
-
         return self.__root_logger
 
     def set_error_hadler(self, type, value, tb):

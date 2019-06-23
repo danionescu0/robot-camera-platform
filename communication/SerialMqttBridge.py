@@ -1,10 +1,12 @@
 import codecs
 import logging
+
 from communication.MqttConnection import MqttConnection
 from communication.Serial import Serial
+from navigation.RobotSerialCommandsConverter import RobotSerialCommandsConverter
 
 
-class RobotIO:
+class SerialMqttBridge:
     COMMUNICATION_TERMINATOR = ';'
 
     def __init__(self, mqtt_connection : MqttConnection, serial: Serial, logging: logging.Logger):
@@ -18,5 +20,5 @@ class RobotIO:
 
     def received_command(self, message: codecs.StreamReader):
         self.__logging.debug("Received through MQTT: " + message.decode())
-        forward_serial = message + self.COMMUNICATION_TERMINATOR.encode()
+        forward_serial = message + RobotSerialCommandsConverter.MESSAGE_TERMINATOR.encode()
         self.__serial.send(forward_serial)

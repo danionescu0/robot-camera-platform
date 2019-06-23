@@ -1,6 +1,5 @@
 from multiprocessing import Queue
 
-
 from navigation.FaceRecognitionProcess import FaceRecognitionProcess
 from navigation.FaceRecognition import FaceRecognition
 

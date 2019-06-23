@@ -35,7 +35,6 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-
         handler_input.response_builder.speak(LAUNCH_MESSAGE).ask("hmm should reprompt")
         return handler_input.response_builder.response
 

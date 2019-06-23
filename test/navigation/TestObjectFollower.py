@@ -34,17 +34,14 @@ class TestObjectFollower(unittest.TestCase):
     def __get_numpy_image(self, return_shape_value: tuple):
         image = MagicMock()
         type(image).shape = PropertyMock(return_value=return_shape_value)
-
         return image
 
     def __get_robot_commands(self, return_value: str):
         robot_commands = RobotSerialCommandsConverter()
         robot_commands.get_steer_command = MagicMock(return_value=return_value)
-
         return robot_commands
 
     def __get_object_detector(self, return_value: tuple):
         object_detector = ColoredObjectDetector(((24, 86, 6), (77, 255, 255)))
         object_detector.find = MagicMock(return_value=(return_value))
-
         return object_detector

@@ -4,11 +4,11 @@ import codecs
 import paho.mqtt.client as mqtt
 
 
-class MqttConnection():
+class MqttConnection:
     MOVEMENT_CHANNEL = 'robot/movement'
     STATUS_CHANNEL = 'robot/status'
 
-    def __init__(self, host : str, port : str, user : str, password : str):
+    def __init__(self, host: str, port: str, user: str, password: str):
         self.__host = host
         self.__port = port
         self.__user = user
@@ -35,5 +35,5 @@ class MqttConnection():
     def listen(self, callback: Callable[[codecs.StreamReader], None]):
         self.__callback = callback
 
-    def send(self, channel : str, message : str):
+    def send(self, channel: str, message: str):
         self.__client.publish(channel, message, 2)
