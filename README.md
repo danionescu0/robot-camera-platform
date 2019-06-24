@@ -286,11 +286,32 @@ For the code you can start with "SpecificFaceDetector.py" file
 # 3. Alexa voice robot commands demo
 
 Work in progress !!
-For this you'll need Alexa Echo Dot speaker: https://www.amazon.com/All-new-Echo-Dot-3rd-Gen/dp/B0792KTHKJ
 
-The Android / IOS application (check out this guide for pair: https://www.techradar.com/how-to/amazon-echo-setup)
+**Prerequizites**
+For this you'll need:
+ 
+* Alexa Echo Dot speaker: https://www.amazon.com/All-new-Echo-Dot-3rd-Gen/dp/B0792KTHKJ
 
-Also you'll need an developer amazon account and an AWS account: https://developer.amazon.com and https://console.aws.amazon.com
+* The Android / IOS application (check out this guide for pair: https://www.techradar.com/how-to/amazon-echo-setup)
+
+* A developer amazon account and an AWS account: https://developer.amazon.com and https://console.aws.amazon.com
+
+* A ngrok account: https://ngrok.com/
+
+
+**Configure ngrok**
+
+* Login, download ngrok for Linux (arm) and unzip on the board: https://dashboard.ngrok.com/get-started
+
+* Connect your account running the command, replacing your token with the actual token 
+````
+./ngrok authtoken your_token
+````
+
+* Run the ngrok server on 80
+````
+./ngrok http 80
+````
 
 
 

@@ -1,4 +1,3 @@
-import json
 import logging
 import requests
 
@@ -12,8 +11,9 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
 
-# ngrok url
-API_ENDPOINT = "http://690a5f93.ngrok.io"
+
+# ngrok url, replace with your own
+API_ENDPOINT = "http://ngrok_url"
 SKILL_NAME = "robot voice commands"
 HELP_MESSAGE = "You can left 50, right 100, forward 150 replacing the numbers with millisecond values. Or " \
                "you can say lights on and lights off"
@@ -51,9 +51,8 @@ class MotorsCommand(AbstractRequestHandler):
         given_command = handler_input.request_envelope.request.intent.slots["Command"].value
         duration = str(handler_input.request_envelope.request.intent.slots["number"].value)
         requests.post(url=API_ENDPOINT + '/api/motors', data={'command': given_command, 'duration': duration})
-        speech = "Sending your command: {0}, {1}".format(given_command, duration)
+        speech = "Sending"
         handler_input.response_builder.speak(speech).ask("hmm should reprompt")
-
         return handler_input.response_builder.response
 
 
