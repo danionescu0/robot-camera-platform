@@ -4,7 +4,7 @@
             "invocationName": "robot voice commands",
             "intents": [
                 {
-                    "name": "MotorsCommand",
+                    "name": "SteeringCommand",
                     "slots": [
                         {
                             "name": "number",
@@ -12,11 +12,12 @@
                         },
                         {
                             "name": "Command",
-                            "type": "LIST_OF_COMMANDS"
+                            "type": "LIST_OF_STEERING_COMMANDS"
                         }
                     ],
                     "samples": [
-                        "{Command} {number}"
+                        "{Command} {number}",
+                        "{Command}"
                     ]
                 },
                 {
@@ -50,13 +51,8 @@
             ],
             "types": [
                 {
-                    "name": "LIST_OF_COMMANDS",
+                    "name": "LIST_OF_STEERING_COMMANDS",
                     "values": [
-                        {
-                            "name": {
-                                "value": "backwards"
-                            }
-                        },
                         {
                             "name": {
                                 "value": "left"

@@ -182,10 +182,23 @@ The robot is able to follow
 
 **Install dependencies**
 First install dependencies using pip, the installation process will be slow. You may need to manually compile opencv
-to the required version 3.4.2. For this purpose see this tutorial https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/
-and be sure to replace 3.3.0 with 3.4.2
+to the required version 3.4.2. For this purpose see this tutorial https://www.pyimagesearch.com/2018/09/26/install-opencv-4-on-your-raspberry-pi/
 
+If you've built your own opencv pip install might not recognise that, so you'll may manually delete opencv from requirements.txt before running the pip install
+
+Recommendation: use vritualenv to install dependencies on:
 ````
+ pip3 install virtualenv
+ virtualenv object_follower
+ source object_follower/bin/activate
+ cd /home/pi/robot-camera-platform/
+ pip install -r /home/pi/robot-camera-platform/requirements_object_follower.txt
+````
+
+
+Or install them directly:
+````
+cd /home/pi/robot-camera-platform/
 sudo pip3 install -r /home/pi/robot-camera-platform/requirements_object_follower.txt
 ````
 
@@ -285,7 +298,7 @@ For the code you can start with "SpecificFaceDetector.py" file
 
 # 3. Alexa voice robot commands demo
 
-Work in progress !!
+Still work in progress !
 
 **Prerequizites**
 For this you'll need:
@@ -296,7 +309,7 @@ For this you'll need:
 
 * A developer amazon account and an AWS account: https://developer.amazon.com and https://console.aws.amazon.com
 
-* A ngrok account: https://ngrok.com/
+* A ngrok account: https://ngrok.com/ or public ip address
 
 
 **Configure ngrok**
@@ -308,11 +321,33 @@ For this you'll need:
 ./ngrok authtoken your_token
 ````
 
-* Run the ngrok server on 80
+* Run the ngrok server on 8080
 ````
-./ngrok http 80
+./ngrok http 8080
 ````
 
+* Create new Skil with the skil from alexa/skil.json, build the skil
+
+* Create new lambda function skil/lambda_function.py , connect it with the skil
+
+* Replace API_ENDPOINT with ngrok instance or your own public ip
+
+* Install dependencies
+
+````
+ virtualenv voice_commands
+ source voice_commands/bin/activate
+ cd /home/pi/robot-camera-platform/
+ pip install -r /home/pi/robot-camera-platform/requirements_voice_commands.txt
+```` 
+
+* Run the server
+
+````
+ source voice_commands/bin/activate
+ cd /home/pi/robot-camera-platform/
+ python voice_commands.py
+````
 
 
 

@@ -5,7 +5,7 @@ from navigation.RobotSerialCommandsConverter import RobotSerialCommandsConverter
 
 class ObjectFollower:
     __MIN_SPEED_PERCENT = 20
-    __MAX_SPEED_PERCENT = 33
+    __MAX_SPEED_PERCENT = 93
 
     def __init__(self, object_detector: ObjectDetector, robot_commands: RobotSerialCommandsConverter,
                  object_size_threshold) -> None:

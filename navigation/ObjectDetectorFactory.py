@@ -26,5 +26,4 @@ class ObjectDetectorFactory:
         face_recognition.configure()
         face_recognition_process_wrapper = FaceRecognitionProcessWrapper(face_recognition, 1)
         face_recognition_process_wrapper.start()
-
         return SpecificFaceDetector(face_recognition_process_wrapper)

@@ -1,5 +1,6 @@
-opencv-python==3.4.2
+opencv-python==4.1.0
 imutils==0.4.3
 pyserial==3.4
 face_recognition==1.2.2
+picamera==1.13
 nose2
