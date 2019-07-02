@@ -10,7 +10,7 @@
 
   This is a research project fun to build and fun to explore and we'll take on the following concepts and technologies:
   
-* programming: Computer vision, Python, Arduino (C++), Java for Android, AWS
+* programming: Computer vision, Python, Arduino (C++), Java for Android, AWS lambda functions
  
 * miscelanious: MQTT, Docker, Docker compose, UV4l, linux services
 
@@ -89,7 +89,7 @@ The robot will stream the video using [UV4l](http://www.linux-projects.org/uv4l/
 The android application is located in this [repository](https://github.com/danionescu0/android-robot-camera)
 
 
-**Installation**
+**Installation for RaspberryPi**
 
 A complete tutorial about uv4l is found here: https://www.instructables.com/id/Raspberry-Pi-Video-Streaming/?ALLSTEPS
 
@@ -110,6 +110,9 @@ chmod +x uv4l/install.sh
 chmod +x uv4l/start.sh
 sh ./uv4l/install.sh 
 ````
+
+Warning you'll see warning messages: "The following signatures were invalid" because on latest raspbian 
+operating system the uv4l packages are not fully supported.
 
 **Configure the project:**
 
