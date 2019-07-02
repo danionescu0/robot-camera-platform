@@ -1,6 +1,6 @@
-FROM resin/rpi-raspbian:jessie:jessie-20180109
+FROM resin/rpi-raspbian:jessie-20180109
 
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install apt-transport-https ca-certificates -y wget
 
 RUN wget -q -O - http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key | apt-key add -
 RUN wget -q -O /etc/apt/sources.list.d/mosquitto-jessie.list http://repo.mosquitto.org/debian/mosquitto-jessie.list
