@@ -205,6 +205,12 @@ cd /home/pi/robot-camera-platform/
 sudo pip3 install -r /home/pi/robot-camera-platform/requirements_object_follower.txt
 ````
 
+Install using Docker (work in progress, still experimental):
+````
+sudo docker build -t object-detect .
+
+```` 
+
 **Optional run unit tests**
 
 Unit tests are using [nose2](http://nose2.readthedocs.io/en/latest/index.html)
