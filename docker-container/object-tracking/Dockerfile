@@ -1,6 +1,7 @@
 FROM balenalib/rpi-raspbian
 
 RUN apt-get update
+RUN apt-get upgrade
 
 # install build depedencies
 RUN apt-get install build-essential \
@@ -10,8 +11,21 @@ RUN apt-get install build-essential \
     git \
     wget \
     curl \
+    zip \
+    unzip
+
+RUN apt-get install libpng12-0 -y
+RUN apt-get install libgtk-3-dev libcanberra-gtk* libatlas-base-dev gfortran python3-dev -y
+RUN apt-get install libjpeg-dev libpng-dev libtiff-dev -y
+RUN apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
+RUN apt-get install libxvidcore-dev libx264-dev -y
+RUN apt-get install libgtk-3-dev -y
+RUN apt-get install libcanberra-gtk* -y
+RUN apt-get install libatlas-base-dev gfortran -y
+RUN apt-get install python3-dev -y
+
+RUN apt-get install  \
     graphicsmagick \
-    libgraphicsmagick1-dev \
     libatlas-dev \
     libavcodec-dev \
     libavformat-dev \
@@ -25,16 +39,13 @@ RUN apt-get install build-essential \
     python3-numpy \
     python3-pip \
     libgtk-3-dev \
-    zip \
     libtiff5-dev \
     libjasper-dev \
-    libpng12-dev \
     libv4l-dev \
     libxvidcore-dev \
     libx264-dev \
     libatlas-base-dev \
-    libraspberrypi0 \
-    unzip
+    libraspberrypi0 -y
 
 RUN apt-get clean
 RUN pip3 install numpy
@@ -85,7 +96,11 @@ WORKDIR /root/dlib
 RUN python3 setup.py install --compiler-flags "-mfpu=neon"
 
 # install other project dependencies with pip
-RUN pip3 install face_recognition==1.2.3
+RUN wget https://files.pythonhosted.org/packages/fa/37/45185cb5abbc30d7257104c434fe0b07e5a195a6847506c074527aa599ec/Click-7.0-py2.py3-none-any.whl
+RUN pip3 install Click-7.0-py2.py3-none-any.whl
+RUN pip3 install --no-cache-dir face_recognition==1.2.3
 RUN pip3 install picamera==1.13
 RUN pip3 install imutils==0.4.3
 RUN pip3 install pyserial==3.4
+
+WORKDIR /workspace

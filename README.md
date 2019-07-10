@@ -184,41 +184,27 @@ The robot is able to follow
 - a known face (this is slow on raspberry pi 3)
 
 **Install dependencies**
-First install dependencies using pip, the installation process will be slow. You may need to manually compile opencv
-to the required version 3.4.2. For this purpose see this tutorial https://www.pyimagesearch.com/2018/09/26/install-opencv-4-on-your-raspberry-pi/
 
-If you've built your own opencv pip install might not recognise that, so you'll may manually delete opencv from requirements.txt before running the pip install
+Install using Docker:
+````
+sudo docker build -t object-tracking .
+chmod +x docker-container/object-tracking/prepare.sh
+./docker-container/object-tracking/prepare.sh
+```` 
 
-Recommendation: use vritualenv to install dependencies on:
+Manual install:
+
+* compile opencv: https://www.pyimagesearch.com/2018/09/26/install-opencv-4-on-your-raspberry-pi/
+
+* use virtualenv to install dependencies, you may need to remove opencv from dependencies list
 ````
  pip3 install virtualenv
  virtualenv object_follower
  source object_follower/bin/activate
  cd /home/pi/robot-camera-platform/
- pip install -r /home/pi/robot-camera-platform/requirements_object_follower.txt
+ pip install -r /home/pi/robot-camera-platform/requirements_object_tracking.txt
 ````
 
-
-Or install them directly:
-````
-cd /home/pi/robot-camera-platform/
-sudo pip3 install -r /home/pi/robot-camera-platform/requirements_object_follower.txt
-````
-
-Install using Docker (work in progress, still experimental):
-````
-sudo docker build -t object-detect .
-
-```` 
-
-**Optional run unit tests**
-
-Unit tests are using [nose2](http://nose2.readthedocs.io/en/latest/index.html)
-
-In console run:
-````
-nose2
-````
 
 **Troubleshooting:**
 
@@ -236,24 +222,26 @@ In navigation/config_navigation.py you'll find:
 ````
 # minimum and maximum HSV touples for color object detector
 # the color below is green
+# to modify "hsv_bounds" [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) is a python helper for HSV range detection
 hsv_bounds = (
-    (24, 86, 6),
-    (77, 255, 255)
+    (46, 83, 0),
+    (85, 255, 212)
 )
 
 # minimum and maximum object size in percent of image width to be considered a valid detection
 object_size_threshold = (4, 60)
 
 #image is resized by width before processing to increase performance (speed)
-resize_image_by_width = 300
+#increasing "resize_image_by_width" will result in more accurate detection but slower processing
+resize_image_by_width = 450
 
 # angle to rotate camera in degreeds
-rotate_camera_by = 90
+rotate_camera_by = 180
 ````
 
-If you want to modify "hsv_bounds" [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) is a python helper for HSV range detection 
+ 
 
-Increasing "resize_image_by_width" will result in more accurate detection but slow processing times.
+
 
 
 **Running the project:**
@@ -261,7 +249,15 @@ Increasing "resize_image_by_width" will result in more accurate detection but sl
 Running the object tracking script in VNC graphical interface in a terminal:
 More information of how to install VNC ​[here](https://www.raspberrypi.org/documentation/remote-access/vnc/).
 
-```` python3 object_tracking.py colored-object --show-video ````
+````
+python3 object_tracking.py colored-object --show-video 
+
+or with docker
+
+sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK -v \
+$XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --volume=$(pwd):/workspace object-detect python3 \
+object_tracking.py colored-object --show-video
+````
 
 This will enable you to view the video, with a circle drawn over it. The circle means 
 that the object has been detected.
@@ -439,3 +435,13 @@ Right motor: PWM (D6), EN1, EN2(A3, A2)
 Infrared sensors: Front (A0), Back(A1)
 
 Tx: D11, Rx: D10
+
+
+**Optional run unit tests**
+
+Unit tests are using [nose2](http://nose2.readthedocs.io/en/latest/index.html)
+
+In console run:
+````
+nose2
+````
