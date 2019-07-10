@@ -1,4 +1,3 @@
-import time
 from multiprocessing import Queue
 
 from flask import Flask, Response, request
@@ -7,6 +6,7 @@ import config
 from communication.Serial import Serial
 from navigation.RobotSerialCommandsConverter import RobotSerialCommandsConverter
 from voice_commands.CommandsProcess import CommandsProcess
+
 
 app = Flask(__name__)
 serial = Serial(config.serial['port'], config.serial['baud_rate'])

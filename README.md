@@ -222,7 +222,6 @@ In navigation/config_navigation.py you'll find:
 ````
 # minimum and maximum HSV touples for color object detector
 # the color below is green
-# to modify "hsv_bounds" [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) is a python helper for HSV range detection
 hsv_bounds = (
     (46, 83, 0),
     (85, 255, 212)
@@ -239,6 +238,13 @@ resize_image_by_width = 450
 rotate_camera_by = 180
 ````
 
+To get a preview of the HSV bounds, you can use the tool located in navigation/visual_hsv_bounds.py like so:
+
+````
+sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
+-e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
+--volume=$(pwd):/workspace object-detect python3 navigation/visual_hsv_bounds.py -f HSV  -w
+````
  
 
 
