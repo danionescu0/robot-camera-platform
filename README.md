@@ -183,13 +183,25 @@ The robot is able to follow
 
 - a known face (this is slow on raspberry pi 3)
 
+Prerequisites:
+
+* Enable VNC on raspberry pi
+* Install VNC viewer on your operating system and log in into the pi
+* Docker is installed
+
+Details: https://www.raspberrypi.org/documentation/remote-access/vnc/
+
 **Install dependencies**
 
 Install using Docker:
 ````
 sudo docker build -t object-tracking .
-chmod +x docker-container/object-tracking/prepare.sh
-./docker-container/object-tracking/prepare.sh
+# the commands below neets to be run on every login
+xhost +local:docker
+xhost -local:docker
+XSOCK=/tmp/.X11-unix
+XAUTH=/tmp/.docker.xauth
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge
 ```` 
 
 Manual install:
@@ -216,7 +228,7 @@ Manual install:
 sudo modprobe bcm2835-v4l2
 ````
 
-**Configuration [optional]**
+**Configuration**
 
 In navigation/config_navigation.py you'll find:
 ````
@@ -238,22 +250,19 @@ resize_image_by_width = 450
 rotate_camera_by = 180
 ````
 
-To get a preview of the HSV bounds, you can use the tool located in navigation/visual_hsv_bounds.py like so:
+**Running the colored object detector:**
+
+The colored object detector needs HSV calibration, to get a preview of the HSV bounds, you can use the tool located 
+in navigation/visual_hsv_bounds.py like so:
 
 ````
 sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
---volume=$(pwd):/workspace object-detect python3 navigation/visual_hsv_bounds.py -f HSV  -w
+--volume=$(pwd):/workspace object-detect python3 navigation/visual_hsv_bounds.py 
 ````
- 
 
 
-
-
-**Running the project:**
-
-Running the object tracking script in VNC graphical interface in a terminal:
-More information of how to install VNC ​[here](https://www.raspberrypi.org/documentation/remote-access/vnc/).
+Running the colored object detector
 
 ````
 python3 object_tracking.py colored-object --show-video 
@@ -265,19 +274,19 @@ $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --volume=$(pwd):/workspace object-detect pyth
 object_tracking.py colored-object --show-video
 ````
 
-This will enable you to view the video, with a circle drawn over it. The circle means 
-that the object has been detected.
+Running the object tracking script with no video output means omitting the --show-video parameter
 
-Running the object tracking script with no video output:
 
-```` python3 object_tracking.py colored-object ````
+**Running the face detector:**
 
-The face follower it's in beta state right now, it seems to be quyte slow, it only processes about between one and 
-two frames per second on a Raspberr pi 3.
-
-If you want to give it a try use this.
+* a Raspberry PI 4 is recommended with Official power supply
  
-```` python3 object_tracking.py specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video ````
+```` 
+sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
+-e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
+--volume=$(pwd):/workspace object-detect python3 object_tracking.py \
+specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video 
+````
 
 
 **How does the image detection works ?**
@@ -290,7 +299,7 @@ If you want to give it a try use this.
 - From our selected contour we apply "minEnclosingCircle" and "moments" to get the coordonates of a circle that 
 will best enclose our largest colored object 
 
-For the code you ca view "ColoredObjectDetector.py" file
+For the code see "ColoredObjectDetector.py" file
 
 **2. face recognition**
 
@@ -311,7 +320,7 @@ For the code you can start with "SpecificFaceDetector.py" file
 
 Still work in progress !
 
-**Prerequizites**
+**Prerequisites**
 For this you'll need:
  
 * Alexa Echo Dot speaker: https://www.amazon.com/All-new-Echo-Dot-3rd-Gen/dp/B0792KTHKJ
