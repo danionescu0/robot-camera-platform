@@ -198,10 +198,8 @@ Install using Docker:
 sudo docker build -t object-tracking .
 # the commands below neets to be run on every login
 xhost +local:docker
-xhost -local:docker
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth
-xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge
 ```` 
 
 Manual install:
