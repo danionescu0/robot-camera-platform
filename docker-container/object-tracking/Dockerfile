@@ -1,4 +1,4 @@
-FROM balenalib/rpi-raspbian
+FROM balenalib/rpi-raspbian:stretch-20190619 
 
 RUN apt-get update
 RUN apt-get upgrade
@@ -102,5 +102,14 @@ RUN pip3 install --no-cache-dir face_recognition==1.2.3
 RUN pip3 install picamera==1.13
 RUN pip3 install imutils==0.4.3
 RUN pip3 install pyserial==3.4
+
+# install tensorflow
+WORKDIR /root
+RUN git clone https://github.com/PINTO0309/Tensorflow-bin.git
+WORKDIR /root/Tensorflow-bin
+RUN pip3 install --upgrade setuptools
+RUN pip3 install tensorflow-1.14.0-cp35-cp35m-linux_armv7l.whl
+RUN pip3 install Pillow==5.4.1
+
 
 WORKDIR /workspace

@@ -200,7 +200,7 @@ sudo docker build -t object-tracking .
 xhost +local:docker
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth
-```` 
+sh ```` 
 
 Manual install:
 
@@ -256,7 +256,7 @@ in navigation/visual_hsv_bounds.py like so:
 ````
 sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
---volume=$(pwd):/workspace object-detect python3 navigation/visual_hsv_bounds.py 
+--volume=$(pwd):/workspace object-tracking python3 navigation/visual_hsv_bounds.py 
 ````
 
 
@@ -268,7 +268,7 @@ python3 object_tracking.py colored-object --show-video
 or with docker
 
 sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK -v \
-$XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --volume=$(pwd):/workspace object-detect python3 \
+$XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --volume=$(pwd):/workspace object-tracking python3 \
 object_tracking.py colored-object --show-video
 ````
 
@@ -282,7 +282,7 @@ Running the object tracking script with no video output means omitting the --sho
 ```` 
 sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
---volume=$(pwd):/workspace object-detect python3 object_tracking.py \
+--volume=$(pwd):/workspace object-tracking python3 object_tracking.py \
 specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video 
 ````
 

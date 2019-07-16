@@ -6,12 +6,12 @@ from communication.Serial import Serial
 
 class CommandsProcess(Process):
     SLEEP_INTERVAL = 0.1
-    COMMAND_DURATION = 5000
 
-    def __init__(self, serial: Serial, input_queue: Queue):
+    def __init__(self, serial: Serial, input_queue: Queue, command_max_duration: int):
         Process.__init__(self)
         self.__serial = serial
         self.__input_queue = input_queue
+        self.__command_max_duration = command_max_duration
         self.__stop = False
         self.__command_started = 0
         self.__last_command = None
@@ -23,7 +23,7 @@ class CommandsProcess(Process):
             if command is not None:
                 self.__command_started = int(round(time.time() * 1000))
                 self.__last_command = command
-            if command is None and int(round(time.time() * 1000)) - self.__command_started > self.COMMAND_DURATION:
+            if command is None and int(round(time.time() * 1000)) - self.__command_started > self.__command_max_duration:
                 continue
             self.__serial.send(self.__last_command.encode())
             print("Sending command:" + self.__last_command)

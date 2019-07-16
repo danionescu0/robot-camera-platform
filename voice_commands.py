@@ -14,7 +14,7 @@ serial.connect()
 commands_converter = RobotSerialCommandsConverter()
 
 communication_queue = Queue(maxsize=3)
-process = CommandsProcess(serial, communication_queue)
+process = CommandsProcess(serial, communication_queue, 5000)
 process.daemon = True
 process.start()
 
