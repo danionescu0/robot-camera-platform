@@ -200,7 +200,7 @@ sudo docker build -t object-tracking .
 xhost +local:docker
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth
-sh ```` 
+```` 
 
 Manual install:
 

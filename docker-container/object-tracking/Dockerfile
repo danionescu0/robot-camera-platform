@@ -1,4 +1,4 @@
-FROM balenalib/rpi-raspbian:stretch-20190619 
+FROM balenalib/rpi-raspbian:buster-20190619
 
 RUN apt-get update
 RUN apt-get upgrade
@@ -26,7 +26,7 @@ RUN apt-get install python3-dev -y
 
 RUN apt-get install  \
     graphicsmagick \
-    libatlas-dev \
+    libatlas-base-dev \
     libavcodec-dev \
     libavformat-dev \
     libboost-all-dev \
@@ -49,7 +49,8 @@ RUN apt-get install  \
 
 RUN apt-get clean
 RUN pip3 install numpy
-RUN pip3 install --upgrade setuptools
+RUN pip3 install wheel
+RUN sudo -H pip3 install setuptools --upgrade
 
 ENV OPENCV_VERSION 4.1.0
 
@@ -73,23 +74,20 @@ RUN  cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D BUILD_TESTS=OFF \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D BUILD_EXAMPLES=OFF ..
-
 # adjust swap size for compilation
 RUN apt-get install -y dphys-swapfile
 RUN sed -i 's/CONF_SWAPSIZE=100$/CONF_SWAPSIZE=1024/' /etc/dphys-swapfile
 RUN /etc/init.d/dphys-swapfile stop
 RUN /etc/init.d/dphys-swapfile start
-
 # install opencv
 RUN make -j3
 RUN make install
 RUN ldconfig
-
 # clean up opencv and reduce the image size by deleting files
 WORKDIR /
 RUN rm -rf /opencv
 
-# build dlib
+# install dlib
 WORKDIR /root
 RUN git clone -b 'v19.6' --single-branch https://github.com/davisking/dlib.git
 WORKDIR /root/dlib
@@ -102,14 +100,16 @@ RUN pip3 install --no-cache-dir face_recognition==1.2.3
 RUN pip3 install picamera==1.13
 RUN pip3 install imutils==0.4.3
 RUN pip3 install pyserial==3.4
+RUN pip3 install Pillow==5.4.1
 
 # install tensorflow
 WORKDIR /root
 RUN git clone https://github.com/PINTO0309/Tensorflow-bin.git
 WORKDIR /root/Tensorflow-bin
 RUN pip3 install --upgrade setuptools
-RUN pip3 install tensorflow-1.14.0-cp35-cp35m-linux_armv7l.whl
-RUN pip3 install Pillow==5.4.1
-
+RUN apt-get install libhdf5-serial-dev
+RUN apt-get install libhdf5-dev
+RUN mv tensorflow-1.14.0-cp35-cp35m-linux_armv7l.whl tensorflow-1.14.0-cp37-cp37m-linux_armv7l.whl
+RUN pip3 install tensorflow-1.14.0-cp37-cp37m-linux_armv7l.whl
 
 WORKDIR /workspace
