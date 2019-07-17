@@ -33,5 +33,4 @@ class SpecificFaceDetector(ObjectDetector):
         left, top, right, bottom = coordonates
         center = (int(left + (right - left) / 2), int((top + (bottom - top) / 2)))
         radius = int((bottom - top) / 2)
-
         return (center, radius)
