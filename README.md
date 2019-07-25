@@ -197,9 +197,7 @@ Install using Docker:
 ````
 sudo docker build -t object-tracking .
 # the commands below neets to be run on every login
-xhost +local:docker
-XSOCK=/tmp/.X11-unix
-XAUTH=/tmp/.docker.xauth
+xhost +local:docker;XSOCK=/tmp/.X11-unix;XAUTH=/tmp/.docker.xauth
 ```` 
 
 Manual install:
@@ -277,7 +275,7 @@ Running the object tracking script with no video output means omitting the --sho
 
 **Running the face detector:**
 
-* a Raspberry PI 4 is recommended with Official power supply
+* a Raspberry PI 4 is recommended with 2.5A power bank
  
 ```` 
 sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \

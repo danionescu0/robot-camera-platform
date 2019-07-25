@@ -5,9 +5,10 @@ from navigation.ObjectDetector import ObjectDetector
 
 
 class TfObjectDetector(ObjectDetector):
-    def __init__(self, model_path: str, label_file: str):
+    def __init__(self, model_path: str, label_file: str, label: str):
         self.__model_path = model_path
         self.__label_file = label_file
+        self.__label = label
         super().__init__()
 
     def configure(self):
@@ -43,16 +44,21 @@ class TfObjectDetector(ObjectDetector):
         detected_classes = self.__interpreter.get_tensor(self.__output_details[1]['index'])
         detected_scores = self.__interpreter.get_tensor(self.__output_details[2]['index'])
         num_boxes = self.__interpreter.get_tensor(self.__output_details[3]['index'])
-        print(num_boxes)
+        self.detected = False
         for i in range(int(num_boxes)):
             top, left, bottom, right = detected_boxes[0][i]
             classId = int(detected_classes[0][i])
             score = detected_scores[0][i]
-            if score > 0.5:
-                xmin = left * initial_w
-                ymin = bottom * initial_h
-                xmax = right * initial_w
-                ymax = top * initial_h
+            print(self.__labels[classId])
+            if self.__label == self.__labels[classId] and score > 0.5:
+                self.detected = True
+                left = left * initial_w
+                bottom = bottom * initial_h
+                right = right * initial_w
+                top = top * initial_h
+                center = (int(left + (right - left) / 2), int((top + (bottom - top) / 2)))
+                radius = int((bottom - top) / 2)
+                self.circle_coordonates = (center, radius)
                 print(self.__labels[classId], 'score = ', score)
-                box = [xmin, ymin, xmax, ymax]
-                print( 'box = ', box )
+                box = [left, top, right, bottom, center, radius]
+                print('box = ', box )

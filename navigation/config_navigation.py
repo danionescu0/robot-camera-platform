@@ -7,7 +7,7 @@ hsv_bounds = (
 )
 
 # minimum and maximum object size in percent of image width to be considered a valid detection
-object_size_threshold = (4, 60)
+object_size_threshold = (4, 80)
 
 #image is resized by width before processing to increase performance (speed)
 #increasing "resize_image_by_width" will result in more accurate detection but slower processing

@@ -28,7 +28,8 @@ class ObjectDetectorFactory:
         # work in progress need to download mobilenet and parametrize it
         tf_object_detector = TfObjectDetector(
             './resources/tflite_for_rpi/mobilenet_v2.tflite',
-            './resources/tflite_for_rpi/coco_labels.txt'
+            './resources/tflite_for_rpi/coco_labels.txt',
+            'person'
         )
         tf_object_detector.configure()
         return tf_object_detector
