@@ -32,7 +32,7 @@ args = parser.parse_args()
 serial = Serial(config.serial['port'], config.serial['baud_rate'])
 serial.connect()
 detector = ObjectDetectorFactory.get(args.detector_type, args.extra_cfg)
-object_follower = ObjectFollower(detector, RobotSerialCommandsConverter(), config_navigation.object_size_threshold)
+object_follower = ObjectFollower(detector, RobotSerialCommandsConverter(), config_navigation.object_size_threshold, (20, 93))
 image_debug = ImageDebug((0, 255, 255), 2)
 
 frame_provider = VideoStream(usePiCamera=True, resolution=(1024, 768)).start()

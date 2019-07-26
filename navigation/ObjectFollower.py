@@ -4,14 +4,12 @@ from navigation.RobotSerialCommandsConverter import RobotSerialCommandsConverter
 
 
 class ObjectFollower:
-    __MIN_SPEED_PERCENT = 20
-    __MAX_SPEED_PERCENT = 93
-
     def __init__(self, object_detector: ObjectDetector, robot_commands: RobotSerialCommandsConverter,
-                 object_size_threshold) -> None:
+                 object_size_threshold, speed_percent_limits: tuple) -> None:
         self.__object_detector = object_detector
         self.__robot_commands = robot_commands
         self.__object_size_threshold = object_size_threshold
+        self.__speed_percent_limits = speed_percent_limits
         self.radius = 0
         self.center = (0, 0)
         self.__image = None
@@ -58,5 +56,5 @@ class ObjectFollower:
     def __get_speed_percent(self, radius, image):
         height, width, channels = image.shape
         minimum_object_size, maximum_object_size = self.__get_object_bounded_sizes(width)
-        return MathUtils.remap(radius * 2, minimum_object_size, maximum_object_size,
-                               self.__MAX_SPEED_PERCENT, self.__MIN_SPEED_PERCENT)
+        return MathUtils.remap(radius * 2, maximum_object_size, minimum_object_size,
+                               self.__speed_percent_limits[0], self.__speed_percent_limits[1])
