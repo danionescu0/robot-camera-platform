@@ -49,7 +49,6 @@ class TfObjectDetector(ObjectDetector):
             top, left, bottom, right = detected_boxes[0][i]
             classId = int(detected_classes[0][i])
             score = detected_scores[0][i]
-            print(self.__labels[classId])
             if self.__label == self.__labels[classId] and score > 0.5:
                 self.detected = True
                 left = left * initial_w
@@ -59,6 +58,4 @@ class TfObjectDetector(ObjectDetector):
                 center = (int(left + (right - left) / 2), int((top + (bottom - top) / 2)))
                 radius = int((bottom - top) / 2)
                 self.circle_coordonates = (center, radius)
-                print(self.__labels[classId], 'score = ', score)
                 box = [left, top, right, bottom, center, radius]
-                print('box = ', box )

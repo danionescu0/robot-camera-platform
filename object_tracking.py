@@ -1,5 +1,6 @@
-import argparse
 import time
+import argparse
+from multiprocessing import Queue
 
 import cv2
 import imutils
@@ -12,6 +13,7 @@ from navigation.ObjectFollower import ObjectFollower
 from navigation.RobotSerialCommandsConverter import RobotSerialCommandsConverter
 from navigation.ObjectDetectorFactory import ObjectDetectorFactory
 from navigation.ImageDebug import ImageDebug
+from navigation.LongRunningCommand import LongRunningCommand
 
 
 # configure argument parser
@@ -32,8 +34,13 @@ args = parser.parse_args()
 serial = Serial(config.serial['port'], config.serial['baud_rate'])
 serial.connect()
 detector = ObjectDetectorFactory.get(args.detector_type, args.extra_cfg)
-object_follower = ObjectFollower(detector, RobotSerialCommandsConverter(), config_navigation.object_size_threshold, (20, 93))
+object_follower = ObjectFollower(detector, RobotSerialCommandsConverter(), config_navigation.object_size_threshold,
+                                 config_navigation.speed_limit_percents)
 image_debug = ImageDebug((0, 255, 255), 2)
+communication_queue = Queue(maxsize=3)
+process = LongRunningCommand(serial, communication_queue, 1000)
+process.daemon = True
+process.start()
 
 frame_provider = VideoStream(usePiCamera=True, resolution=(1024, 768)).start()
 time.sleep(2.0)
@@ -49,7 +56,7 @@ while not cv2.waitKey(30) & 0xFF == ord('q'):
     object_follower.process(frame)
     if object_follower.has_command():
         command = object_follower.get_command()
-        serial.send(object_follower.get_command().encode())
+        communication_queue.put(object_follower.get_command(), block=False)
         print('Motor command: {0}'.format(command))
         image_debug.draw_guidelines(frame, object_follower.center, object_follower.radius)
     if args.video:
