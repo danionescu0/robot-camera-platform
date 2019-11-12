@@ -179,9 +179,11 @@ b. Follow the instructions there to configure and build it
 
 The robot is able to follow 
 
-- objects of a specific color (A demo video is available on [youtube](https://youtu.be/z9qLmHRMCZY))
+- objects of a specific color (YouTube video [youtube](https://youtu.be/z9qLmHRMCZY))
 
-- a known face (this is slow on raspberry pi 3)
+- a known face 
+
+- a person (YouTube video: https://youtu.be/CLvkD5kB7xk)
 
 Prerequisites:
 
@@ -246,11 +248,22 @@ resize_image_by_width = 450
 rotate_camera_by = 180
 ````
 
+**Optional run unit tests**
+
+Unit tests are using [nose2](http://nose2.readthedocs.io/en/latest/index.html)
+
+In console run:
+````
+nose2
+````
+
 **Running the colored object detector:**
 
 The colored object detector needs HSV calibration, to get a preview of the HSV bounds, you can use the tool located 
 in navigation/visual_hsv_bounds.py like so:
 
+
+Calibration:
 ````
 sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
@@ -258,7 +271,7 @@ sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
 ````
 
 
-Running the colored object detector
+Actually running the colored object detector
 
 ````
 python3 object_tracking.py colored-object --show-video 
@@ -284,6 +297,14 @@ sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
 specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video 
 ````
 
+**Running the person detector:**
+
+YouTube video: https://youtu.be/CLvkD5kB7xk
+
+Console command:
+````
+sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --volume=$(pwd):/workspace object-tracking python3 object_tracking.py tf-object-detector --show-video
+````
 
 **How does the image detection works ?**
 
@@ -367,9 +388,9 @@ For this you'll need:
 
 
 
-# 4. Building the robot
+# 4. Building the robot platform
 
-The arduino sketch can be found in arduino-sketck folder.
+The arduino sketch can be found in ./arduino-sketck folder.
 
 
 **Components**
@@ -380,59 +401,46 @@ Fritzing schematic:
 
 **Checklist:** 
 
-1. Plexiglass sheet
+- The robot itself, either build it your selves or buy a kit (search TS100 robot tank on ebay, aliexpress)
 
-2. Plastic sheet ( you can also use a plexiglass sheet here )
+The important thing to remember is that, the robot should have two DC (6-12V) motors and that each motor should 
+be responsable for direction on left respectively right.  
 
-3. Glue
+- Small nuts and bolts, spacers
 
-4. Tyre + DC motor with gearbox + bracket (eBay) 13$
+- A robot case, this should be made out of a light material, and it will house the electronics and batteries
 
-5. Small nuts and bolts
+- LED light (optional)
 
-6. 2 x any directional wheel tyre
+- Arduino pro mini 328p 
 
-7. Small LED flashlight (it will be transformed into a headlight)
+- 2 x infrared obstacle sensor (optional)
 
-8. Arduino pro mini 328p (eBay) 2 $
+- PCB
 
-9. 2 x infrared obstacle sensor
+- NPN tranzistor (for the flashlight)
 
-10. PCB
+- L7805CV 5V regulator
 
-11. NPN tranzistor (to drive the flashlight)
+- L298 H-bridge 
 
-12. L7805CV 5V regulator
+- Rezistor 220 Ohms
 
-13. L298 H-bridge 
+- Male usb connector, wires
 
-14. Rezistor 220 Ohms
+- AMS1117 3.3v regulator (for communication between arduino and raspberry pi)
 
-15. Male usb connector
+- Male & female PCB connectors
 
-16. Male micro usb connector
+- On / off switch (for cutting the power to the motor battery)
 
-17. Various wires
+- 2S 1300 mAh LiPo battery with XT-60 connector, XT-60 female LiPo connector 
 
-18. 3 v regulator (for communication between arduino and raspberry pi)
+- 5v battery pack for the Rasberry
 
-19. Male & female PCB connectors
+- Raspberry Pi, 16 GB SD card Raspberry Pi card, acrylic case with fan
 
-20. On / off switch
-
-21. XT-60 female LiPo connector (eBay) 1.2$
-
-22. 2S 1300 mAh LiPo battery with XT-60 connector
-
-23. 5v battery pack
-
-24. Raspberry Pi 3
-
-25. Raspberry Pi card
-
-26. Raspberry Pi case
-
-27. Raspberry Pi camera
+- Raspberry Pi camera
 
 
 **Pinout:**
@@ -445,14 +453,4 @@ Right motor: PWM (D6), EN1, EN2(A3, A2)
 
 Infrared sensors: Front (A0), Back(A1)
 
-Tx: D11, Rx: D10
-
-
-**Optional run unit tests**
-
-Unit tests are using [nose2](http://nose2.readthedocs.io/en/latest/index.html)
-
-In console run:
-````
-nose2
-````
+Serial communication pins: Tx: D11, Rx: D10
