@@ -5,6 +5,9 @@ from communication.Serial import Serial
 
 
 class LongRunningCommand(Process):
+    """
+    Sends a serial command regularry for a period of time
+    """
     SLEEP_INTERVAL = 0.1
 
     def __init__(self, serial: Serial, input_queue: Queue, command_max_duration: int):
