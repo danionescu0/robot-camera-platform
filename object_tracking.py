@@ -56,6 +56,8 @@ while not cv2.waitKey(30) & 0xFF == ord('q'):
     object_follower.process(frame)
     if object_follower.has_command():
         command = object_follower.get_command()
+        if communication_queue.full():
+            communication_queue.get(block=False)
         communication_queue.put(object_follower.get_command(), block=False)
         print('Motor command: {0}'.format(command))
         image_debug.draw_guidelines(frame, object_follower.center, object_follower.radius)

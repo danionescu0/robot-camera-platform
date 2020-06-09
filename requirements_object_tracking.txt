@@ -1,6 +1,7 @@
-opencv-python==4.1.0
+opencv-python==4.1.0.25
 imutils==0.4.3
 pyserial==3.4
 face_recognition==1.2.3
 picamera==1.13
 nose2
+https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_armv7l.whl; sys_platform == "linux"

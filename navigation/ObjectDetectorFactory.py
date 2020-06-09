@@ -4,7 +4,7 @@ from navigation.ColoredObjectDetector import ColoredObjectDetector
 from navigation.SpecificFaceDetector import SpecificFaceDetector
 from navigation.FaceRecognitionProcessWrapper import FaceRecognitionProcessWrapper
 from navigation.FaceRecognition import FaceRecognition
-from navigation.TfObjectDetector import TfObjectDetector
+from navigation.TfNewObjectDetector import TfNewObjectDetector
 
 
 class ObjectDetectorFactory:
@@ -25,7 +25,7 @@ class ObjectDetectorFactory:
 
     @staticmethod
     def __get_tf_object_detector():
-        tf_object_detector = TfObjectDetector(
+        tf_object_detector = TfNewObjectDetector(
             config_navigation.tensorflow_model['file'],
             config_navigation.tensorflow_model['labels'],
             'person'

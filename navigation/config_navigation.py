@@ -1,14 +1,15 @@
 # minimum and maximum HSV touples for color object detector
 # the color below is green
-# to modify "hsv_bounds" [Here](https://github.com/jrosebr1/imutils/blob/master/bin/range-detector) is a python helper for HSV range detection
+# to modify "hsv_bounds" use navigation/visual_hsv_bounds.py see README.md for more details
 hsv_bounds = (
     (46, 83, 0),
     (85, 255, 212)
 )
 
+# tensorflow lite model files
 tensorflow_model = {
-    'file': './resources/tflite_for_rpi/mobilenet_v2.tflite',
-    'labels': './resources/tflite_for_rpi/coco_labels.txt'
+    'file': './resources/tensorflow/detect.tflite',
+    'labels': './resources/tensorflow/coco_labels.txt'
 }
 
 # minimum and maximum object size in percent of image width to be considered a valid detection
@@ -23,4 +24,5 @@ speed_limit_percents = (70, 93)
 resize_image_by_width = 450
 
 # angle to rotate camera in degreeds
+# change this if your image is upside down or tilted
 rotate_camera_by = 0

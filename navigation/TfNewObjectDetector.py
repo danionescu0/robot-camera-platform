@@ -2,119 +2,98 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import argparse
-import io
 import re
 import numpy as np
-import picamera
-import cv2
 
 from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 
-CAMERA_WIDTH = 640
-CAMERA_HEIGHT = 480
-
-# add this to requirements.txt https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_armv7l.whl; sys_platform == "linux"
-# work in progress
-
-def load_labels(path):
-  """Loads the labels file. Supports files with or without index numbers."""
-  with open(path, 'r', encoding='utf-8') as f:
-    lines = f.readlines()
-    labels = {}
-    for row_number, content in enumerate(lines):
-      pair = re.split(r'[:\s]+', content.strip(), maxsplit=1)
-      if len(pair) == 2 and pair[0].strip().isdigit():
-        labels[int(pair[0])] = pair[1].strip()
-      else:
-        labels[row_number] = pair[0].strip()
-  return labels
+from navigation.ObjectDetector import ObjectDetector
 
 
-def set_input_tensor(interpreter, image):
-  """Sets the input tensor."""
-  tensor_index = interpreter.get_input_details()[0]['index']
-  input_tensor = interpreter.tensor(tensor_index)()[0]
-  input_tensor[:, :] = image
+class TfNewObjectDetector(ObjectDetector):
+    def __init__(self, model_path: str, label_file: str, label: str):
+        self.__model_path = model_path
+        self.__label_file = label_file
+        self.__label = label
+        self.__threshold = 0.4
+        self.__interpreter = None
+        self.__labels = None
+        self.__input_width = None
+        self.__input_height = None
+        super().__init__()
 
+    def configure(self):
+        self.__labels = self.__load_labels(self.__label_file)
+        self.__interpreter = Interpreter(self.__model_path)
+        self.__interpreter.allocate_tensors()
+        _, self.__input_height, self.__input_width, _ = self.__interpreter.get_input_details()[0]['shape']
 
-def get_output_tensor(interpreter, index):
-  """Returns the output tensor at the given index."""
-  output_details = interpreter.get_output_details()[index]
-  tensor = np.squeeze(interpreter.get_tensor(output_details['index']))
-  return tensor
+    def process(self, image):
+        self.detected = False
+        transformed_image = Image.fromarray(image) \
+            .convert('RGB') \
+            .resize((self.__input_width, self.__input_height), Image.ANTIALIAS)
+        results = self.__detect_objects(self.__interpreter, transformed_image, self.__threshold, self.__labels)
+        if len(results) > 0:
+            left, top, right, bottom = results[0]['bounding_box']
+            self.circle_coordonates = self.__get_center_radius((left, top, left + right, top + bottom))
+            self.detected = True
+        return None
 
+    def __load_labels(self, path):
+        """Loads the labels file. Supports files with or without index numbers."""
+        with open(path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            labels = {}
+            for row_number, content in enumerate(lines):
+                pair = re.split(r'[:\s]+', content.strip(), maxsplit=1)
+                if len(pair) == 2 and pair[0].strip().isdigit():
+                    labels[int(pair[0])] = pair[1].strip()
+                else:
+                    labels[row_number] = pair[0].strip()
+        return labels
 
-def detect_objects(interpreter, image, threshold, labels):
-  """Returns a list of detection results, each a dictionary of object info."""
-  set_input_tensor(interpreter, image)
-  interpreter.invoke()
+    def __set_input_tensor(self, interpreter, image):
+        """Sets the input tensor."""
+        tensor_index = interpreter.get_input_details()[0]['index']
+        input_tensor = interpreter.tensor(tensor_index)()[0]
+        input_tensor[:, :] = image
 
-  # Get all output details
-  boxes = get_output_tensor(interpreter, 0)
-  classes = get_output_tensor(interpreter, 1)
-  scores = get_output_tensor(interpreter, 2)
-  count = int(get_output_tensor(interpreter, 3))
+    def __get_output_tensor(self, interpreter, index):
+        """Returns the output tensor at the given index."""
+        output_details = interpreter.get_output_details()[index]
+        tensor = np.squeeze(interpreter.get_tensor(output_details['index']))
+        return tensor
 
-  results = []
-  for i in range(count):
-    if scores[i] >= threshold and labels[classes[i]] == 'person':
-      ymin, xmin, ymax, xmax = boxes[i]
-      xmin = int(xmin * CAMERA_WIDTH)
-      xmax = int(xmax * CAMERA_WIDTH)
-      ymin = int(ymin * CAMERA_HEIGHT)
-      ymax = int(ymax * CAMERA_HEIGHT)
-      result = {
-          'bounding_box': [xmin, ymin, xmax, ymax],
-          'class_id': classes[i],
-          'class_name': labels[classes[i]],
-          'score': scores[i]
-      }
-      results.append(result)
-  return results
+    def __detect_objects(self, interpreter, image, threshold, labels):
+        """Returns a list of detection results, each a dictionary of object info."""
+        self.__set_input_tensor(interpreter, image)
+        interpreter.invoke()
+        # Get all output details
+        boxes = self.__get_output_tensor(interpreter, 0)
+        classes = self.__get_output_tensor(interpreter, 1)
+        scores = self.__get_output_tensor(interpreter, 2)
+        count = int(self.__get_output_tensor(interpreter, 3))
+        results = []
+        for i in range(count):
+            if scores[i] >= threshold and labels[classes[i]] == self.__label:
+                ymin, xmin, ymax, xmax = boxes[i]
+                xmin = int(xmin * self.__input_width)
+                xmax = int(xmax * self.__input_width)
+                ymin = int(ymin * self.__input_height)
+                ymax = int(ymax * self.__input_height)
+                result = {
+                    'bounding_box': [xmin, ymin, xmax, ymax],
+                    'class_id': classes[i],
+                    'class_name': labels[classes[i]],
+                    'score': scores[i]
+                }
+                results.append(result)
+        return results
 
-
-
-def main():
-  parser = argparse.ArgumentParser(
-      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-  parser.add_argument(
-      '--model', help='File path of .tflite file.', required=True)
-  parser.add_argument(
-      '--labels', help='File path of labels file.', required=True)
-  parser.add_argument(
-      '--threshold',
-      help='Score threshold for detected objects.',
-      required=False,
-      type=float,
-      default=0.4)
-  args = parser.parse_args()
-
-  labels = load_labels(args.labels)
-  interpreter = Interpreter(args.model)
-  interpreter.allocate_tensors()
-  _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
-
-  with picamera.PiCamera(
-      resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=30) as camera:
-    camera.start_preview()
-    try:
-      stream = io.BytesIO()
-      for _ in camera.capture_continuous(
-          stream, format='jpeg', use_video_port=True):
-        stream.seek(0)
-        image = Image.open(stream).convert('RGB').resize(
-            (input_width, input_height), Image.ANTIALIAS)
-        results = detect_objects(interpreter, image, args.threshold, labels)
-        print(results)
-        stream.seek(0)
-        stream.truncate()
-        # cv2.imshow('frame', stream)
-
-    finally:
-      camera.stop_preview()
-
-
-if __name__ == '__main__':
-  main()
+    def __get_center_radius(self, coordonates):
+        left, top, right, bottom = coordonates
+        center = (int(left + (right - left) / 2), int((top + (bottom - top) / 2)))
+        radius = int((bottom - top) / 2)
+        return (center, radius)

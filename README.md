@@ -195,22 +195,14 @@ Details: https://www.raspberrypi.org/documentation/remote-access/vnc/
 
 **Install dependencies**
 
-Install using Docker:
-````
-sudo docker build -t object-tracking .
-# the commands below neets to be run on every login
-xhost +local:docker;XSOCK=/tmp/.X11-unix;XAUTH=/tmp/.docker.xauth
-```` 
 
-Manual install:
-
-* compile opencv: https://www.pyimagesearch.com/2018/09/26/install-opencv-4-on-your-raspberry-pi/
+* Install opencv4: https://www.pyimagesearch.com/2019/09/16/install-opencv-4-on-raspberry-pi-4-and-raspbian-buster/
 
 * use virtualenv to install dependencies, you may need to remove opencv from dependencies list
 ````
  pip3 install virtualenv
- virtualenv object_follower
- source object_follower/bin/activate
+ virtualenv robotcamenv
+ source robotcamenv/bin/activate
  cd /home/pi/robot-camera-platform/
  pip install -r /home/pi/robot-camera-platform/requirements_object_tracking.txt
 ````
@@ -263,24 +255,16 @@ The colored object detector needs HSV calibration, to get a preview of the HSV b
 in navigation/visual_hsv_bounds.py like so:
 
 
-Calibration:
+Calibration, use the sliders to select some color (will be in white on the screen):
 ````
-sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
--e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
---volume=$(pwd):/workspace object-tracking python3 navigation/visual_hsv_bounds.py 
+python navigation/visual_hsv_bounds.py 
 ````
+Afer the calibration write the values in the /navigation/config_navigation.py under hsv_bounds
 
-
-Actually running the colored object detector
+To run the colored object detector:
 
 ````
 python3 object_tracking.py colored-object --show-video 
-
-or with docker
-
-sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK -v \
-$XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --volume=$(pwd):/workspace object-tracking python3 \
-object_tracking.py colored-object --show-video
 ````
 
 Running the object tracking script with no video output means omitting the --show-video parameter
@@ -291,10 +275,7 @@ Running the object tracking script with no video output means omitting the --sho
 * a Raspberry PI 4 is recommended with 2.5A power bank
  
 ```` 
-sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 \
--e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH \
---volume=$(pwd):/workspace object-tracking python3 object_tracking.py \
-specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video 
+python object_tracking.py specific-face --extra_cfg /path_to_a_picture_containing_a_face --show-video 
 ````
 
 **Running the person detector:**
@@ -303,7 +284,7 @@ YouTube video: https://youtu.be/CLvkD5kB7xk
 
 Console command:
 ````
-sudo docker run --device=/dev/video0 --device=/dev/vchiq --device=/dev/ttyS0 -e DISPLAY=$DISPLAY -v $XSOCK:$XSOCK \-v $XAUTH:$XAUTH -e XAUTHORITY=$XAUTH --volume=$(pwd):/workspace object-tracking python3 object_tracking.py tf-object-detector --show-video
+python object_tracking.py tf-object-detector --show-video
 ````
 
 **How does the image detection works ?**

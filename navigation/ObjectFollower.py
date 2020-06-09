@@ -23,6 +23,7 @@ class ObjectFollower:
         return self
 
     def has_command(self) -> bool:
+        print(self.radius, self.__is_detection_in_range())
         if self.radius == 0 or not self.__is_detection_in_range():
             return False
         return True

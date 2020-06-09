@@ -16,6 +16,10 @@ class SpecificFaceDetector(ObjectDetector):
         original_image, coordonates = self.__face_recognition.get_result()
         if original_image is not None:
             x, y, x1, y1 = coordonates
+            if not hasattr(cv2, 'TrackerCSRT_create') or not callable(getattr(cv2, 'TrackerCSRT_create')):
+                self.circle_coordonates = self.__get_center_radius((x, y, x1, y1))
+                self.detected = True
+                return
             self.__tracker = cv2.TrackerCSRT_create()
             self.__tracker.init(original_image, (x, y, (x1 - x), abs(y1 - y)))
             return

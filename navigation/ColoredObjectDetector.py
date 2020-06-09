@@ -14,8 +14,7 @@ class ColoredObjectDetector(ObjectDetector):
         mask = cv2.inRange(hsv_frame, self.__hsv_bounds[0], self.__hsv_bounds[1])
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
-        contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-                                cv2.CHAIN_APPROX_SIMPLE)[-2]
+        contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         if len(contours) == 0:
             return
         largest_contour = max(contours, key=cv2.contourArea)
