@@ -1,4 +1,4 @@
-opencv-python==4.1.0.25
+opencv-python==4.1.1.26
 imutils==0.4.3
 pyserial==3.4
 face_recognition==1.2.3
