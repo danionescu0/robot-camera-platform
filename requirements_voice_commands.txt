@@ -1,2 +1,2 @@
 pyserial==3.4
-Flask==1.0.1
+Flask==2.3.2
